@@ -1,0 +1,14 @@
+.button {
+    color: black;
+    padding: 6px 12px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 12px;
+    background: #fff;
+    border: 1px solid #ccc;
+    margin-left: -1px;
+}
+    .active {
+        background: #ecf7ff;
+    }

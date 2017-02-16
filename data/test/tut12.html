@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+.axis path,
+.axis line{
+  fill: none;
+  stroke: black;
+  shape-rendering: crispEdges;
+}
+
+.axis--y path {
+  display: none;
+}
+
+.tick line{
+  opacity: 0.2;
+}
+
+.line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
+
+.area {
+  /*fill: rgba(70, 130, 180, 0.5);*/
+  /*fill: steelblue;*/
+  fill: none;
+  stroke: steelblue;
+  clip-path: url(#clip);
+  pointer-events: all;
+}
+
+.area-positions {
+  fill: rgba(70, 130, 180, 0.1);
+}
+
+.zoom {
+  cursor: move;
+  fill: none;
+  pointer-events: all;
+}
+
+.info circle {
+  fill: none;
+  stroke: white;
+}
+
+.legend {
+  fill: white;
+  font-family: sans-serif;
+  font-size: 14px;
+}
+
+.legend rect{
+  fill: black;
+}
+
+</style>
+<svg width="960" height="500"></svg>
+<!-- <script src="//d3js.org/d3.v4.min.js"></script> -->
+<script src="//d3js.org/d3.v4.js"></script>
+<script src="//d3js.org/d3-queue.v3.min.js"></script>
+<script>
+
+var svg = d3.select("svg"),
+    margin = {top: 20, right: 20, bottom: 110, left: 40},
+    margin2 = {top: 430, right: 20, bottom: 30, left: 40},
+    width = +svg.attr("width") - margin.left - margin.right,
+    height = +svg.attr("height") - margin.top - margin.bottom,
+    height2 = +svg.attr("height") - margin2.top - margin2.bottom;    
+
+// 1. convert to 8 digits, ex: 20170117
+// 2. ensure we date array length is the same as all other!
+// var parseTime = d3.timeParse("%y%m%d");
+var parseTime = d3.timeParse("%d-%b-%y"),
+    bisectDate = d3.bisector(function(d) { return d.date; }).left,
+    formatValue = d3.format(",.2f"),
+    formatCurrency = function(d) { return "$" + formatValue(d); };
+
+var x = d3.scaleTime().range([0, width]),
+    x2 = d3.scaleTime().range([0, width]),
+    y = d3.scaleLinear().range([height, 0]),
+    y2 = d3.scaleLinear().range([height2, 0]),
+    z = d3.scaleOrdinal(d3.schemeCategory10);
+
+var xAxis = d3.axisBottom(x)
+      .tickSizeInner(-height)
+      .tickSizeOuter(0)
+      .tickPadding(10)
+
+var xAxis2 = d3.axisBottom(x2)
+      .tickSizeInner(-height2)
+      .tickSizeOuter(0)
+      .tickPadding(10)
+
+var yAxis = d3.axisRight(y)      
+
+var brush = d3.brushX()
+    .extent([[0, 0], [width, height2]])
+    .on("brush end", brushed);
+
+var zoom = d3.zoom()
+    .scaleExtent([1, Infinity])
+    .translateExtent([[0, 0], [width, height]])
+    .extent([[0, 0], [width, height]])
+    .on("zoom", zoomed);
+
+var area = d3.area()
+    .curve(d3.curveMonotoneX)
+    .x(function(d) { return x(d.date); })
+    .y0(height)
+    .y1(function(d) { return y(d.price); });    
+
+var area2 = d3.area()
+    .curve(d3.curveMonotoneX)
+    .x(function(d) { 
+      // console.log(d.date); 
+      return x2(d.date); })
+    .y0(height2)
+    .y1(function(d) { 
+      // console.log(d.price); 
+      return y2(d.price); });
+
+var area3 = d3.area()
+    .curve(d3.curveMonotoneX)
+    .x(function(d) { 
+      // console.log(d.date); 
+      return x(d.date); })
+    .y0(height)
+    .y1(0.0)
+    .defined(function(d){return d.defined})
+    // .defined(function(d){return})
+
+svg.append("defs").append("clipPath")
+    .attr("id", "clip")
+  .append("rect")
+    .attr("width", width)
+    .attr("height", height);
+
+var focus = svg.append("g")
+  .attr("class", "focus")
+  .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+var context = svg.append("g")
+    .attr("class", "context")
+    .attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");
+
+// 3. data can NOT have NaN elements, needs to convert to null
+// reference on queue: http://learnjsdata.com/read_data.html
+d3.queue()
+	.defer(d3.json, "data.json")
+  .defer(d3.json, "data_positions.json")
+	.await(analyze);
+
+function analyze(error, data, data1) {
+  console.log('analyze', error, data, data1)
+
+  if(error) { console.log(error); }
+
+  data.dte = data.dte.map(function(d){return parseTime(d)})
+	var xrng = d3.extent(data.dte)
+
+  var collections = ['cls', '20d', '50d', '200d'].map(function(id){
+  	return {
+      id: id,
+      values: data[id].map(function(d, idx){
+      	return {date: data.dte[idx], price: +data[id][idx]}
+      })
+      }
+    });
+  
+  var ymn = d3.min(collections, function(c) { return d3.min(c.values, function(d) { return d.price; }); })
+  var ymx = d3.max(collections, function(c) { return d3.max(c.values, function(d) { return d.price; }); })
+	
+	x.domain(xrng);
+  y.domain([ymn, ymx])
+  x2.domain(x.domain());
+  y2.domain(y.domain());
+  z.domain(collections.map(function(c) { 
+    // console.log(c.id)
+    return c.id; 
+  }));
+  
+  focus.append("g")
+      .attr("class", "axis axis--x")
+      .attr("transform", "translate(0," + height + ")")
+      .call(d3.axisBottom(x));
+
+  focus.append("g")
+      .attr("class", "axis axis--y")
+      .attr("transform", "translate(" + (width-10) + ",0)")
+      .call(d3.axisRight(y)
+        .tickSizeInner(-width)
+        .tickSizeOuter(0)
+        .tickPadding(10)
+        .tickValues([0, 3, 6, 9, 12])
+        .tickFormat(function(d) { return "$" + d; }))
+
+  // paths 
+  var collection = focus.selectAll(".collection")
+    .data(collections)
+    .enter().append("g")
+      .attr("class", "collection");
+
+  collection.append("path")
+      .datum(function(d){ return d.values})
+      .attr("class", "area")
+      .attr("d", area)
+      .style("stroke", function(d, i) { 
+        return z(z.domain()[i]); 
+      })
+
+  // volume bars
+  var bars = ['vol'].map(function(id){
+    return {
+      id: id,
+      values: data[id].map(function(d, idx){
+        return {date: data.dte[idx], volume: +data[id][idx]}
+      })
+      }
+  })
+  console.log(bars)
+
+  // info labels
+  var info = focus.selectAll(".info")
+    .data(collections)
+    .enter().append("g")
+      .attr("class", "info")
+      .style("display", "none")
+
+  info.append("circle")
+    .attr("r", 4.5)
+    .style("fill", function(d, i) { 
+        return z(z.domain()[i]); 
+      })
+  info.append("text").attr("x", 9.0).attr("dy", ".35em")
+
+  // legend
+  var legend = focus.append("g")
+    .attr("class", "legend")
+    .attr("width", 150)
+    .attr("height", 100)
+    .style("display", "none")
+  
+  var box = legend.append('rect')
+    .attr("x", 0)
+    .attr("y", -20)
+    .attr("width", 140)
+    .attr("height", 80)
+
+  var text_link = legend.selectAll('.legend_link')
+    .data(collections)
+    .enter().append("circle")
+      .attr("r", 3.5)
+      .style("fill", function(d, i){
+        return z(z.domain()[i])
+      })
+      .attr("transform", function(d, i){
+        return "translate(8," + ((i*16)-6) + ")"
+      })
+      
+  var text = legend.selectAll(".legend_line")
+    .data(collections)
+    .enter().append("text")
+      .text(function(d){
+        // console.log(d.id)
+        return d.id
+      })
+      .attr("x", 16)
+      .attr("y", function(d, i){
+        // console.log(i*10)
+        return i*16
+      })
+
+  // context
+  context.append("path")
+      .datum(collections[0].values)
+      .attr("class", "area")
+      .attr("d", area2)
+
+  context.append("g")
+      .attr("class", "axis axis--x")
+      .attr("transform", "translate(0," + height2 + ")")
+      .call(xAxis2);
+
+  context.append("g")
+      .attr("class", "brush")
+      .call(brush)
+      .call(brush.move, x.range());
+
+  svg.append("rect")
+      .attr("class", "zoom")
+      .attr("width", width)
+      .attr("height", height)
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+      .on("mouseover", function() { 
+        legend.style("display", null); 
+        info.style("display", null); 
+      })
+      .on("mouseout", function() { 
+        legend.style("display", "none");
+        info.style("display", "none"); 
+      })
+      .on("mousemove", mousemove)
+      .call(zoom);
+
+  console.log(collections)
+
+  // positions
+  data1.dte = data1.dte.map(function(d){return parseTime(d)})
+
+  var positions = function(){
+    return {
+      id:'positions',
+      values: data1.dte.map(function(d, idx){
+        console.log(d, idx, data1['action'][idx], data1['amount'][idx])
+        return {date: data1.dte[idx], defined: !!+data1['action'][idx]}
+      })
+  }
+  }()
+  console.log(positions)
+
+  var position = focus.selectAll(".positions")
+    .data([positions])
+    .enter().append("g")
+      .attr("class", "position")
+
+  position.append("path")
+      .datum(positions.values)
+      .attr("class", "area-positions")
+      .attr("d", area3)
+
+
+  // console.log('collections', collections)
+  // console.log(info)
+
+  function mousemove(){
+    // console.log(collections[0].values)
+    var x0 = x.invert(d3.mouse(this)[0]),
+        idx = bisectDate(collections[0].values, x0, 1);
+    // console.log('index', idx)
+
+    //  update text
+    text.text(function(d, i){
+      // console.log(d.values[idx])
+
+      d0 = d.values[idx - 1],
+      d1 = d.values[idx],
+      r = x0 - d0.date > d1.date - x0 ? d1 : d0;
+
+      var s = d.id+': '+r.price
+      if(d.id == 'cls') s = 'US:AMD: $'+r.price
+      return s
+    })
+
+    var apy = 0;
+    var apx = 0;
+
+    //  position path markers
+    info.attr("transform", function(d, i){
+      // console.log(d, i)
+      d0 = d.values[idx - 1],
+      d1 = d.values[idx],
+      r = x0 - d0.date > d1.date - x0 ? d1 : d0;
+
+      var px = x(r.date), 
+          py = y(r.price);
+
+      apx = px;
+      apy += py;
+
+      // console.log('np', px, py)
+
+      return "translate("+[px, py]+")";
+    })
+
+    // position legend
+    apy /= 3;
+    apx -= 160; 
+    apy -= 100;
+    legend.attr("transform", function(){
+      return "translate("+[apx, apy]+")"
+    })
+
+  }
+}
+
+function brushed() {
+  if (d3.event.sourceEvent && d3.event.sourceEvent.type === "zoom") return; // ignore brush-by-zoom
+  var s = d3.event.selection || x2.range();
+  x.domain(s.map(x2.invert, x2));
+  focus.selectAll(".area").attr("d", area);
+  focus.selectAll(".area-positions").attr("d", area3);
+  focus.select(".axis--x").call(xAxis);
+  svg.select(".zoom").call(zoom.transform, d3.zoomIdentity
+      .scale(width / (s[1] - s[0]))
+      .translate(-s[0], 0));
+}
+
+function zoomed() {
+  if (d3.event.sourceEvent && d3.event.sourceEvent.type === "brush") return; // ignore zoom-by-brush
+  var t = d3.event.transform;
+  x.domain(t.rescaleX(x2).domain());
+  focus.selectAll(".area").attr("d", area);
+  focus.selectAll(".area-positions").attr("d", area3);
+  focus.select(".axis--x").call(xAxis);
+  context.select(".brush").call(brush.move, x.range().map(t.invertX, t));
+}
+</script>

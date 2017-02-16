@@ -1,0 +1,76 @@
+.stock_item {
+	width: 100%;
+	height: 20px;
+	padding: 10px 0px 10px 0px;
+	/*font-family: sans-serif;*/
+	/*font-size: 14px;*/
+	vertical-align: bottom;	
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+	user-select: none;
+	cursor: default;
+	overflow: auto;
+	display: table;
+}
+
+.stock_item:not(:first-child) {
+    border-top: solid 1px #d0d0d0;
+}
+
+.stock_item_h {
+	float: left;
+	height: 20px;	
+	width: 100%;
+	display: table-row;
+}
+
+/*stock name*/
+.stock_item_n {	
+	float: left;
+	font-size: 14px;
+	margin-left: 10px;
+}
+
+.stock_item_v {	
+	float: right;
+	font-size: 14px;
+	display: table-cell;
+	padding-right: 5px;
+}
+
+.stock_item_v span{
+	float: right;
+}
+
+.stock_item_d {
+	width: 120px;
+	float: right;
+	font-size: 12px;
+	display: table-cell;
+	padding-right: 5px;
+}
+
+.stock_item_d span{
+	float: right;
+}
+
+.stock_item_ud {
+	font-size: 12px;
+}
+
+.stock_item_m {
+	float: right;
+}
+
+.stock_item_m span{
+    font-size: 12px;
+    padding: 0px 14px 0px 8px;
+    color:gray;
+}
+
+.stock_item_c {
+
+}
