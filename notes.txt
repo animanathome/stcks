@@ -1,0 +1,31 @@
+TODO:
+
+FE
+- stockgraph socket doubling up issue. Emit function does not properly gets destroyed.
+- add sector sections (organize stock per sector/industry)
+- add market cap + P/E info in stock item
+- add year low + high line in stock grap
+- add balance | watchlist| open positions | alert page (stocks which are coming up to be bought or sold)
+
+BE
+- add percentage loss method
+- setup single update method
+- setup daily sync (crontab)
+
+Education:
+
+1. React
+	- Why?
+	- Not sure how to pass on state between child and parent or parent and child. Examples: setRange in stockgraph
+	- FLUX
+
+2. Docker
+	- What is it and why would you use it?
+
+3. D3
+	- What?
+	- Declarative vs ....
+
+4. Javascript
+	- Callback why?
+	- Asynchronous what?

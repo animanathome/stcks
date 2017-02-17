@@ -33,7 +33,7 @@ class App extends React.Component {
         	this.init()
         });
         socket.on('stock:get_positions', (data) => {
-        	console.log('get_positions result:', data.stock_list)
+        	// console.log('get_positions result:', data.stock_list)
         	this.setState({day:data.stock_list})
         })
         socket.on('stock:get_tickers', (data) =>{        	

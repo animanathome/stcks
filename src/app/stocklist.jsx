@@ -6,31 +6,53 @@ import theme from './stocklist.css';
 class StockList extends React.Component {
 	constructor(props){
 		super(props)
+		this.state = {
+			items: []
+		}
+	}
+
+	componentWillReceiveProps(nextProps){
+		// console.log('componentWillReceiveProps', nextProps)
+		var stock_items = nextProps.stock
+		if(typeof(nextProps.stock) === 'string'){
+			stock_items = JSON.parse(nextProps.stock)
+		}
+		// console.log(typeof(stock_items))
+		// console.log(stock_items)
+
+		var pp = ['prc', 'dv', 'dp', 'sbl', 'nme', 'app', 'pq', 'pgl', 'pglp']
+		var obj = {}
+		var unified_items = stock_items.map(function(stock_item, idx){			
+			obj = {}
+			pp.map(function(p){
+				obj[p] = stock_item.hasOwnProperty(p) ? stock_item[p] : undefined
+			})
+			return obj
+		})
+		this.setState({items:unified_items})
 	}
 
 	render() {
-		// console.log(this.props)
-		// console.log(this.state.name)
-		// console.log(this.props.name)
-
-		var stock_items = this.props.stock
-		if(typeof(this.props.stock) === 'string'){
-			stock_items = JSON.parse(this.props.stock)
-		}
-		// console.log(stock_items, typeof(stock_items))
-
 		return (
 			<div className={theme['stock_list']}>
 				{
-					stock_items.map((stock, i) => {
+					this.state.items.map((stock, i) => {
 						return (
 							<StockItem
 								key={i}
+								
 								nme={stock.nme}
 								sbl={stock.sbl}
+								
 								prc={stock.prc}
 								dv={stock.dv}
 								dp={stock.dp}
+
+								app={stock.app}
+								pq={stock.pq}
+								pgl={stock.pgl}
+								pglp={stock.pglp}
+
 								width={this.props.width}
 								socket={this.props.socket}
 							/>
