@@ -1,16 +1,25 @@
 TODO:
 
 FE
-- stockgraph socket doubling up issue. Emit function does not properly gets destroyed.
-- add sector sections (organize stock per sector/industry)
+x - stockgraph socket doubling up issue. Emit function does not properly gets destroyed.
+x - add sector sections (organize stock per sector/industry)
 - add market cap + P/E info in stock item
-- add year low + high line in stock grap
+x - add year low + high line in stock graph
 - add balance | watchlist| open positions | alert page (stocks which are coming up to be bought or sold)
+- run update.py when adding a position
+- add last updated + total stock count
+- fix open position display to it doesn't overflow
+- fix legend display so it shows the current date
+- add percentage of position to stock item
+- fix dates so it doesn't display weekends
 
 BE
-- add percentage loss method
+- add percentage loss method/strategy
+	- check as well what the difference would be in both outcome (final value) as well as transaction costs (note, 1 transaction = $10)
 - setup single update method
 - setup daily sync (crontab)
+- optimize updated data so it only appends the missing data (instead of querying everything every time)
+- prioritize query for active stock
 
 Education:
 

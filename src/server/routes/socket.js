@@ -123,6 +123,11 @@ var stock = (function(){
 		return get_json_file(jsonPath)
 	}
 
+	var info = function(ticker){
+		var jsonPath = path.join(__dirname, '../../..', 'data', 'info', ticker+'.json');
+		return get_json_file(jsonPath)	
+	}
+
 	var data = function(symbol, indicators, duration){
 		// get all price data for the given ticker
 		var jsonPath = path.join(__dirname, '../../..', 'data', 'data', symbol+'.json');
@@ -132,6 +137,7 @@ var stock = (function(){
 	return {
 		all_positions: all_positions,
 		all_tickers: all_tickers,
+		info: info,
 		data: data,
 		positions: positions,
 		add_position: add_position,
@@ -228,6 +234,19 @@ module.exports = function (socket) {
 		console.log('returning', result)
 		socket.emit('stock:get_ticker_positions', result)
 	})
+
+	//	-----------------------------------------
+	//	info
+	socket.on('stock:get_info', function(data){
+		// get all positions
+		console.log('get_info', data)
+
+		var stock_data = stock.info()
+		console.log('result', stock_data)
+		socket.emit('stock:get_info', {
+			info: stock_data
+		})
+	})	
 
 	//	-----------------------------------------
 	// positions

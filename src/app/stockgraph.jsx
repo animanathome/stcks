@@ -22,6 +22,8 @@ class StockGraph extends React.Component {
 	constructor(props) {
 		super(props);
 		var scope = this;
+		this.gotData = this.gotData.bind(this)
+		this.gotPositions = this.gotPositions.bind(this)
 
 		this.state = {
 			data:[],
@@ -46,46 +48,39 @@ class StockGraph extends React.Component {
 			range:'1Y',
 			indicators:['SMA20', 'SMA50', 'SMA200']
 		}
+		this.time_range = {
+			'1M': 20,
+			'3M': 65,
+			'6M': 130,
+			'1Y': 260,
+			'2Y': 540,
+			'3Y': 800,
+			'5Y': 1300,
+			'10Y': 2600
+		}
 
-		// TODO: this doesn't get properly distroyed when closing the item.
-		// Therefore every time we open up the item a new call is added (doubling up every time)
-		this.props.socket.on('stock:get_ticker_data', (data) => {
-			// console.log('got stock:get_ticker_data back:', data)
-			if(scope.props.symbol != data.stock){
-				return
-			}
-
-			if(data.hasOwnProperty('error')){
-				console.warn('No data available for', scope.props.symbol)
-			}else{
-				var jdata = JSON.parse(data.stock_data);
-				// this.setState({data:jdata})
-				this.memory.data = jdata
-				this.setRange()
-			}        	
-		})
-
-		this.props.socket.on('stock:get_ticker_positions', (data) => {
-			// console.log('got', data.user, 'stock:get_ticker_positions back', data)			
-			if(scope.props.symbol != data.stock){
-				return
-			}
-
-			if(data.hasOwnProperty('error')){
-				console.warn('No data available for', scope.props.symbol)
-			}else{
-				// console.log('Setting data for', scope.props.symbol)
-				var object = {}
-				object[data.user] = data.stock_data
-				// deferred.resolve();
-				this.setState(object)
-			}
-		})
+		this.props.socket.on('stock:get_ticker_data', this.gotData)
+		this.props.socket.on('stock:get_ticker_positions', this.gotPositions)
 	};
 	
-	getData(){
-		console.log('getData')
+	gotData(data){		
+		if(this.props.symbol != data.stock){
+			return
+		}
+		// console.log('gotData', data)
 
+		if(data.hasOwnProperty('error')){
+			console.warn('No data available for', this.props.symbol)
+		}else{
+			var jdata = JSON.parse(data.stock_data);
+			// this.setState({data:jdata})
+			this.memory.data = jdata
+			this.setRange()
+		}
+	}
+
+	getData(){
+		// console.log('getData')
 		var scope = this;
 		var query = {}
 		query['symbol'] = this.props.symbol;
@@ -93,95 +88,62 @@ class StockGraph extends React.Component {
 		query['duration'] = 'month';
 
 		this.props.socket.emit('stock:get_ticker_data', query);
+	}
 
-		// NOTE: make sure we only ever listen once... otherwise we're going
-		// to create a new one every time we click on stockItem. 
-		// THOUGHT: might be better to see whether or not is already exists as
-		// we might require to query additional data 
-		// this.props.socket.once('stock:get_ticker_data', (data) => {
-		// 	console.log('got stock:get_ticker_data back:', data)
-
-		// 	if(data.hasOwnProperty('error')){
-		// 		console.warn('No data available for', scope.props.symbol)
-		// 	}else{
-		// 		var jdata = JSON.parse(data.stock_data);
-		// 		this.setState({data:jdata})        	
-		// 		this.memory.data = jdata
-		// 	}        	
-		// })
+	gotPositions(data){		
+		if(this.props.symbol != data.stock){
+			return
+		}
+		// console.log('got', data.user, 'stock:get_ticker_positions back', data)
+		if(data.hasOwnProperty('error')){
+			console.warn('No data available for', this.props.symbol)
+		}else{
+			var object = {}
+			object[data.user] = data.stock_data
+			this.setState(object)
+		}
 	}
 
 	getPositions(user){
-		// var deferred = Q.defer();
-
-		// user can currently be me or positions
 		if(user == undefined){
 			user = 'positions'
 		}
-		console.log('getPositions', user)
+		// console.log('getPositions', user)
 
 		var scope = this;
 		var query = {}
 		query['symbol'] = this.props.symbol;
 		query['user'] = user;
 		this.props.socket.emit('stock:get_ticker_positions', query)
-
-		// this.props.socket.once('stock:get_ticker_positions', (data) => {
-		// 	console.log('got', user, 'stock:get_ticker_positions back', data)
-			
-		// 	if(data.hasOwnProperty('error')){
-		// 		console.warn('No data available for', scope.props.symbol)
-		// 	}else{
-		// 		console.log('Setting data for', scope.props.symbol)
-		// 		var object = {}
-		// 		object[user] = data.stock_data
-		// 		// deferred.resolve();
-		// 		this.setState(object)
-		// 	}
-		// })
-		// return deferred.promise;
 	}
 
 	componentDidMount(){
-		var scope = this;
-
 		this.getData()
 		this.getPositions('positions')
-		// .then(function(){
-			scope.getPositions('me')	
-		// })
-		
+		this.getPositions('me')	
+	}
+
+	componentWillUnmount(){
+		this.props.socket.removeListener('stock:get_ticker_data', this.gotData);
+		this.props.socket.removeListener('stock:get_ticker_positions', this.gotPositions);
 	}
 
 	setRange(range){
 		// console.log('setRange', range)
-
 		if(range == undefined){
 			range = '1Y'
 		}
-
-		var days = 1
-		switch(range){
-			case '1M': days = 20; break;
-			case '3M': days = 65; break;
-			case '6M': days = 130; break;
-			case '1Y': days = 260; break;
-			case '2Y': days = 540; break;
-			case '3Y': days = 800; break;
-			case '5Y': days = 1300; break;
-			case '10Y': days = 2600; break;
-		}
-		// console.log('ndays:', days)
-
-		// console.log(this.memory.data)
-		var slice = this.memory.data.data.data.slice(Math.max(this.memory.data.data.data.length - days, 1))
+		var days = this.time_range[range]
+		// console.log(this.memory)
+		var slice = this.memory.data.data.slice(Math.max(this.memory.data.data.length - days, 1))
 		// console.log(slice)
+		// console.log('structure:', this.memory.data.structure)
 
 		var data_to_set = {
 			'info': this.memory.data.info,
 			'data': {
 				'data': slice,
-				'structure': this.memory.data.data.structure
+				'structure': this.memory.data.structure
 			}
 		}
 		this.setState({data:data_to_set, 'range':range})
@@ -235,9 +197,8 @@ class StockGraph extends React.Component {
 	
 
 	render(){
-		// console.log("render", this.state.me)
-
-		var range_options = ['1M', '3M', '6M', '1Y', '2Y', '3Y', '5Y', '10Y']
+		// console.log("render", this.state)
+		var range_options = ['1M', '3M', '6M', '1Y', '3Y', '5Y', '10Y']
 		var indicator_options = [
 			// 'BB', 'EMA', 'KC', 'MAE', 'PSAR', 'PC', 
 			'SMA20', 'SMA50', 'SMA200'
@@ -249,6 +210,7 @@ class StockGraph extends React.Component {
 				</Tabs>
 				<LineChart width={this.props.width} 
 						   display={this.state.display} 
+						   info={this.props.info}
 						   positions={this.state.positions} 
 						   range={this.state.range}
 						   me={this.state.me} 

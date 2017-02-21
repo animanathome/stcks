@@ -64,7 +64,18 @@ var Grid=React.createClass({
 
 });
 
-var InfoLine=React.createClass({
+var HInfoLine = React.createClass({
+    render: function(){
+        var x = this.props.x;
+        var y = this.props.y;
+        var d="M0,"+y(this.props.yp)+"H"+x(this.props.xr[1])
+        return (
+            <path style={{strokeDasharray:'5, 5'}} className={theme['hline-info']} d={d}></path>
+        )
+    }
+});
+
+var VInfoLine=React.createClass({
     render: function(){
         if(!this.props.hasOwnProperty('index') 
         || !this.props.hasOwnProperty('data')){
@@ -78,19 +89,13 @@ var InfoLine=React.createClass({
         if(idx >= data.length){
             return null
         }
+
         var x = this.props.x;
         var y = this.props.y;
         var px = x(data[idx].day);
-        // console.log(px)
-
-        var yrng = y(this.props.ytb)
-
-        // var d = "M"+px+","+(ymn-ymx)
-        // var d="M10,0V100"
-        var d="M"+px+",0V"+yrng
-        // console.log(d)
+        var d="M"+px+",0V"+y(this.props.yb)
         return (
-            <path style={{strokeDasharray:'2, 2'}} className={theme['line-info']} d={d}></path>
+            <path style={{strokeDasharray:'2, 2'}} className={theme['vline-info']} d={d}></path>
         )
     }
 });
@@ -201,12 +206,12 @@ var Positions=React.createClass({
         var today = new Date()
         if(positions[li][2] == 'open'){
             result.push({
-                date: d3.timeDay.offset(today),
+                date: d3.timeDay.offset(today, -1),
                 defined:true
             })
 
             result.push({
-                date: d3.timeDay.offset(today, +1),
+                date: d3.timeDay.offset(today),
                 defined:false
             })
         }
@@ -444,6 +449,7 @@ var LineChart=React.createClass({
                 <div>Loading...</div>
             )
         }else{
+            // console.log('info', this.props.data.info.yl, this.props.data.info.yh)
             var parseTime = d3.timeParse("%d-%m-%Y");            
             var dmyDateFormat = d3.timeFormat("%d/%m/%y");
 
@@ -466,9 +472,10 @@ var LineChart=React.createClass({
             // console.log('structure', structure)
 
             // dates
-            // console.log('data', data.data.data)
+            // console.log('data', data.data)
             // TODO: https://gist.github.com/mbostock/5827353
             var dates = data.data.data.map(function(d){
+                // console.log(d)
                 return parseTime(d[0])
             })
             var xrng = d3.extent(dates)
@@ -485,7 +492,7 @@ var LineChart=React.createClass({
             // console.log('close', cdata)
 
             // 20d moving averages
-            var ma20index = structure.indexOf('20d')
+            var ma20index = structure.indexOf('20sma')
             var ma20data = data.data.data.map(function(d, idx){
                 return {'price':+d[ma20index], 'day':dates[idx]}
             })
@@ -493,7 +500,7 @@ var LineChart=React.createClass({
             // console.log('ma20data', ma20data)
 
             // 50d moving averages
-            var ma50index = structure.indexOf('50d')
+            var ma50index = structure.indexOf('50sma')
             var ma50data = data.data.data.map(function(d, idx){
                 return {'price':+d[ma50index], 'day':dates[idx]}
             })
@@ -501,15 +508,25 @@ var LineChart=React.createClass({
             // console.log('ma50data', ma50data)
 
             // 200d moving averages
-            var ma200index = structure.indexOf('200d')
+            var ma200index = structure.indexOf('200sma')
             var ma200data = data.data.data.map(function(d, idx){
                 return {'price':+d[ma200index], 'day':dates[idx]}
             })
             this._ma200data = ma200data
             // console.log('ma200data', ma200data)
 
+            // get y (price) min and max
             var ymn = d3.min(cdata, function(d) { return d.price; })
             var ymx = d3.max(cdata, function(d) { return d.price; })
+
+            // yearly min and max
+            // console.log('info', this.props.info)
+            var yymn = parseFloat(this.props.info.yl);
+            var yymx = parseFloat(this.props.info.yh);
+            if(['2Y', '3Y', '5Y', '10Y'].indexOf(this.props.range) == -1){
+                if(yymn < ymn) ymn = yymn
+                if(yymx > ymx) ymx = yymx
+            }
 
             var x = d3.scaleTime().range([0, width]),
                 y = d3.scaleLinear().range([height, 0]),
@@ -628,7 +645,11 @@ var LineChart=React.createClass({
                                 height={height} x={x} 
                                 positions={me}/>
 
-                            {this.state.infoVisibility ? <InfoLine ytb={yrng} y={y} x={x} data={cdata} index={this.state.infoIndex}/>:null}
+                            
+                            <HInfoLine yp={this.props.info.yh} xr={xrng} y={y} x={x} data={cdata} index={this.state.infoIndex}/>
+                            <HInfoLine yp={this.props.info.yl} xr={xrng} y={y} x={x} data={cdata} index={this.state.infoIndex}/>
+                            
+                            {this.state.infoVisibility ? <VInfoLine yb={ymna} y={y} x={x} data={cdata} index={this.state.infoIndex}/>:null}
                             {this.state.infoVisibility ? <Legend align={lalm} x={lxp} y={lyp} colors={z} displayColors={ldpl} content={lcnt}/>:null}
 
 

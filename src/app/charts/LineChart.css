@@ -17,7 +17,14 @@
 
 }
 
-.line-info {
+.hline-info {
+    fill: none;
+    stroke-width: 3px;
+    stroke: gray;
+    opacity: 0.35;    
+}
+
+.vline-info {
     fill: none;
     stroke-width: 1px;
     stroke: gray;

@@ -28,15 +28,15 @@ class StockItem extends React.Component {
 	// }
 
 	render(){
-		// console.log('StockItem:', this.state)
+		// console.log('StockItem:', this.props.info)
 		// console.log(theme)
-		console.log(this.props.pgl, typeof(this.props.pgl))
+		// console.log(this.props.pgl, typeof(this.props.pgl))
 		var _this = this;
 		return (
 			<div className={theme['stock_item']}>
 				<div onClick={this.handleClick} className={theme['stock_item_h']}>					
 					<div className={theme['stock_item_n']}>
-						<span>{this.props.nme} 
+						<span>{this.props.info.nme} 
 							<font color="gray"><small> {this.props.sbl}</small></font>
 						</span>
 					</div>
@@ -50,32 +50,33 @@ class StockItem extends React.Component {
 
 					<div className={theme['stock_item_d']}>
 						<span>
-							{this.props.pgl < 0 && 
-								<font color="red">{this.props.pgl+" ("+this.props.pglp+")"}
+							{this.props.info.pgl < 0 && 
+								<font color="red">{this.props.info.pgl+" ("+this.props.info.pglp+")"}
 									<FontIcon 
 										className={theme['stock_item_ud']} 
 										value='arrow_downward'/>
 								</font>
 							}
-							{this.props.pgl > 0 && 
-								<font color="green">{this.props.pgl+" ("+this.props.pglp+")"}
+							{this.props.info.pgl > 0 && 
+								<font color="green">{this.props.info.pgl+" ("+this.props.info.pglp+")"}
 									<FontIcon 
 										className={theme['stock_item_ud']} 
 										value='arrow_upward'/>
 								</font>
 							}
-							{typeof(this.props.pgl) === 'undefined' && <font>-</font>}
+							{typeof(this.props.info.pgl) === 'undefined' && <font>-</font>}
 
 						</span>
 					</div>
 
 					<div className={theme['stock_item_q']}>
 						<span>
-							{typeof(this.props.pq) === 'undefined' && <font>-</font>}
-							{typeof(this.props.pq) !== 'undefined' && <font>{this.props.pq}</font>}
+							{typeof(this.props.info.pq) === 'undefined' && <font>-</font>}
+							{typeof(this.props.info.pq) !== 'undefined' && <font>{this.props.info.pq}</font>}
 						</span>
 					</div>
 
+					{/*
 					<div className={theme['stock_item_v']}>
 						
 							{typeof(this.props.app) === 'undefined' && <span><font>-</font></span>}
@@ -88,7 +89,7 @@ class StockItem extends React.Component {
 					</div>
 
 
-					{/*
+					
 					<div className={theme['stock_item_d']}>
 						<span>
 							{this.props.dv < 0 && 
@@ -111,7 +112,7 @@ class StockItem extends React.Component {
 
 					<div className={theme['stock_item_v']}>
 						<span>							
-							<strong>{this.props.prc}</strong> 
+							<strong>{this.props.info.prc}</strong> 
 							<font color="gray"><small> USD</small></font> 
 						</span>
 					</div>					
@@ -121,6 +122,7 @@ class StockItem extends React.Component {
 					{this.state.showGraph ? 
 					<StockGraph 
 						width={this.props.width-36} 
+						info={this.props.info}
 						socket={this.props.socket} 
 						symbol={this.props.sbl}/>:null
 					}

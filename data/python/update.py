@@ -4,66 +4,40 @@ import json
 import pandas as pd
 import pandas_datareader.data as web
 from datetime import date, datetime, timedelta
-from get_ticker_info import get_ticker_info, get_ticker_value_info
+from ticker_info import get_ticker_info, get_ticker_value_info
+from ticker_positions import ticker_position, active_positions
+from ticker_data import TickerData
 
-def active_tickers():
-	# get all active tickers
-	config = os.path.join(os.path.dirname(__file__), '..', 'config.json')
+def balance():
+	# get the total value of all positions
+	spv = {}
+	tv = 0
+	ap = active_positions()
+	for item in ap:
+		t = TickerData(item).init()
+		cp = float(t.get_value('close', -1)); # current price	
+		pd = ticker_position(item, cp); # position data	
+		pv = pd['quantity'] * cp; # position value
+		spv[item] = {'pv':pv}		
+		tv += pv; # total value
 
-	if not os.path.exists(config):
-		raise Exception('File '+config+' does not exist')
+	for item in ap:
+		pp = '{:.2f}%'.format((spv[item]['pv']/tv)*100)
+		spv[item].update({'pp':pp})
 
-	with open(config) as data_file:    
-		data = json.load(data_file)
-
-	return data['stocks']
-
-def ticker_position(ticker, current_price):
-	# print 'ticker_position', ticker, current_price
-
-	# get the active position for the given ticker
-	# returns the size of the position + the average price
-	_file = os.path.join(os.path.dirname(__file__), '../me', ticker+'.json')
-
-	if not os.path.exists(_file):
-		raise Exception('File '+_file+' does not exist')
-
-	with open(_file) as data_file:    
-		data = json.load(data_file)
-
-	# collect all added open positions
-	quantity = 0
-	position_count = 0
-	price = 0
-	structure = data['structure']
-	for position in reversed(data['data']):
-		if position[structure.index('signal')] != 'open':
-			break
-
-		quantity += int(position[structure.index('quantity')])
-		position_count += 1
-		price += float(position[structure.index('price')])
-
-	# average price
-	price /= float(position_count)
-
-	# gain/loss
-	gl = current_price - price
-	tgl = '{:.2f}'.format(quantity * gl)
-	glp = '{:.2f}%'.format(((current_price/price)-1)*100)
-
-	result =  {'price':price, 'quantity':quantity, 'gl':tgl, 'glp': glp}
-	return result
+	return spv
 
 def today():
 	# get a stock update for each active stock
 	stocks = []	
-	start = datetime.today() - timedelta(days=2)
+	start = datetime.today() - timedelta(days=4)
 	end = date.today()
 
-	for item in active_tickers():
+	for item in active_positions():
+		# print item 
 		#  get ticker price data
 		stock_pd = web.DataReader(item, "yahoo", start, end)
+		# print stock_pd['Close']
 		y_v = stock_pd['Close'].values[-2]
 		# current price
 		t_v = stock_pd['Close'].values[-1]
@@ -82,12 +56,15 @@ def today():
 		stock_si = get_ticker_info(item)
 		if stock_si:
 			company = stock_si['nme']
+			sector = stock_si['str']
 		else:
 			company = item
+			sector = 'Miscellaneous'
 
 		obj.update({
 			'sbl': item,
-			'nme': company
+			'nme': company,
+			'str': sector
 		})
 		
 		# get value of ticker position
@@ -126,4 +103,5 @@ def today():
 		json.dump(stocks, outfile)
 
 if __name__ == '__main__':
-	today()
+	today()	
+	# print balance()

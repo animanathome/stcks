@@ -2,6 +2,27 @@ import os
 import pandas as pd
 from yahoo_finance import Share
 import json
+from data import Data
+
+class TickerInfo(Data):
+	def __init__(self, ticker='TSLA', subdir='info', verbose=True):
+		super(TickerInfo, self).__init__(ticker, subdir, verbose)
+
+	def get_data(self):
+		self.data = get_ticker_info(self.ticker)
+		if not self.data:
+			self.data = {}
+
+		self.data.update(get_ticker_value_info(self.ticker))
+
+	def write_data(self):
+		with open(self.data_file(), 'w') as outfile:
+			json.dump(self.data, outfile)
+
+	def collect_data(self):
+		self.get_data()
+		self.write_data()
+		return self
 
 def get_all_tickers(save_to_file=True):
 	nasdaq = os.path.join(os.path.dirname(__file__), '..', 'resources', 'companylist.csv')
@@ -24,16 +45,6 @@ def get_all_tickers(save_to_file=True):
 
 	return result
 
-def get_ticker_value(symbol='TSLA'):
-	# Unable to get the current ticker price through this API
-	ticker = Share(symbol)
-	ticker.refresh()
-	print dir(ticker)
-	print ticker.get_open()
-	print ticker.get_price()
-	# print ticker.get_book_value()
-	# print ticker.get_ebitda()
-
 def get_ticker_value_info(symbol='TSLA'):
 	# get additional ticker value data
 	ticker = Share(symbol)
@@ -45,7 +56,7 @@ def get_ticker_value_info(symbol='TSLA'):
 	
 def get_ticker_info(symbol='TSLA'):	
 	# get symbol, name, sector, marketcap and industry from the given NASDAQ ticker
-	# print 'get_ticker_info', symbol
+	print 'get_ticker_info', symbol
 
 	# Data retrieved from: http://www.nasdaq.com/screening/companies-by-industry.aspx?industry=Basic+Industries
 	# Direct download through: http://www.nasdaq.com/screening/companies-by-industry.aspx?industry=Basic%20Industries&exchange=NASDAQ&render=download
@@ -69,6 +80,12 @@ def get_ticker_info(symbol='TSLA'):
 		# symbol is not part of the file...
 		pass
 
+def get_all_ticker_info():
+	for ticker in get_all_tickers(False):
+		TickerInfo(ticker).collect_data()
+
 if __name__ == '__main__':
-	result = get_ticker_value_info()
-	print 'result:', result
+	# result = get_ticker_value_info()
+	# print 'result:', result
+	# TickerInfo().collect_data()
+	get_all_ticker_info()

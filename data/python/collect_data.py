@@ -2,8 +2,8 @@ import os
 import sys
 import json
 # pip install finsymbols
-sys.path.append('/Users/manu/GitHub/finsymbols')
-import finsymbols
+# sys.path.append('/Users/manu/GitHub/finsymbols')
+# import finsymbols
 import pandas as pd
 # pip install pandas-datareader
 import pandas_datareader.data as web
@@ -21,47 +21,17 @@ from matplotlib.dates import DateFormatter, WeekdayLocator,\
 from matplotlib.finance import candlestick_ohlc
 
 
+from ticker_info import get_ticker_value_info, get_ticker_info, get_all_tickers
+
 start = datetime.datetime(2017, 1, 25)
 end = datetime.date.today()
-nasdaq = finsymbols.get_nasdaq_symbols()
-
-def get_stock_info(symbol):
-	for item in nasdaq:
-		if item['symbol'] == symbol:
-			return item
-
-def get_stock_index(symbol):
-	for i in range(len(nasdaq)):
-		if nasdaq[i]['symbol'] == symbol:
-			return i
-
-def get_stock_symbols():
-	return [item['symbol'] for item in nasdaq]
-
-def get_all_tickers():
-	nasdaq = os.path.join(os.path.dirname(__file__),'resources', 'companylist.csv')
-	data = pd.read_csv(nasdaq)
-	print list(data.columns)
-
-	ctr = [x for x in list(data.columns) if x not in ['Symbol', 'Name']]
-	data.drop(ctr, axis=1, inplace=True)
-	
-	# print data.tail
-
-	result = {}
-	for s, n in zip(data['Symbol'].values, data['Name'].values):
-		result[s] = n
-
-	out = os.path.join(os.path.dirname(__file__),'tickers.json')
-	with open(out, 'w') as outfile:
-		json.dump(result, outfile)
 
 class Ticker(object):
 	# collect all ticker data
 	def __init__(self, ticker='TSLA', duration=520, verbose=True):
 		self.ticker = ticker
-		self.data_dir = os.path.join(os.path.dirname(__file__),'data')
-		self.position_dir = os.path.join(os.path.dirname(__file__),'positions')
+		self.data_dir = os.path.join(os.path.dirname(__file__), '..', 'data')
+		self.position_dir = os.path.join(os.path.dirname(__file__),'..', 'positions')
 		self.data = None
 		self.info = None
 		self.duration = duration # duration in weeks
@@ -106,7 +76,13 @@ class Ticker(object):
 		if self.verbose:
 			print self.ticker, 'get_info'
 
-		self.info = get_stock_info(self.ticker)
+		self.info = get_ticker_info(self.ticker)
+		# create some template data
+		if not self.info:
+			self.info = {'nme':self.ticker, 'sbl':self.ticker}
+
+		self.info.update(get_ticker_value_info(self.ticker))
+		# print self.info
 
 	def get_data(self, force=False):		
 		# get_data through web.DataReader
@@ -219,9 +195,9 @@ class Ticker(object):
 
 		return self
 
-def get_all_tickers():
+def get_all_ticker_data():
 	# get all of price data for each NASDAQ stock
-	for item in get_stock_symbols():
+	for item in get_all_tickers():
 		print item
 		try:
 			Ticker(item).collect_data()
@@ -250,8 +226,9 @@ def get_all_positions():
 	get_some_positions(get_stock_symbols())
 
 # get_some_tickers()
-# print Ticker('NVDA').collect_data()
+# Ticker('NVDA').collect_data()
 # print Ticker('NVDA').collect_positions()
 # get_some_positions()
-get_all_tickers()
-get_all_positions()
+# get_all_ticker_data()
+# get_all_positions()
+get_some_tickers()

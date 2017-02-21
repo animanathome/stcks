@@ -4,12 +4,12 @@ import AppBar from 'react-toolbox/lib/app_bar';
 
 import StockList from './stocklist.jsx'
 
-import { Card } from 'react-toolbox/lib/card';
 import SuccessButton from './components/SuccessButton.js';
 import Dialog from 'react-toolbox/lib/dialog';
 import Autocomplete from 'react-toolbox/lib/autocomplete';
 import theme from './app.css';
 
+import _ from 'underscore'
 import io from 'socket.io-client';
 let socket = io(`http://localhost:3000`)
 
@@ -22,7 +22,7 @@ class App extends React.Component {
 			tickers: {},
 			watch_ticker: [],
 			active: false,
-			day: [],
+			open: [],
 			width: 600,
 			height: 800
 		}
@@ -34,7 +34,28 @@ class App extends React.Component {
         });
         socket.on('stock:get_positions', (data) => {
         	// console.log('get_positions result:', data.stock_list)
-        	this.setState({day:data.stock_list})
+			var stock_data = JSON.parse(data.stock_list)
+			
+			// get sectors
+			var sectors = []
+			stock_data.map(function(stock_item, idx){
+				if(stock_item.hasOwnProperty('str')){
+					sectors.push(stock_item['str'])
+				}
+			})
+
+			// sort by sector
+			var sorted_stock = {}
+			_.uniq(sectors).map(function(item){
+				sorted_stock[item] = []
+			})
+			
+			stock_data.map(function(stock_item, idx){
+				sorted_stock[stock_item['str']].push(stock_item)
+			})
+			// console.log(sorted_stock)
+
+        	this.setState({open:sorted_stock})
         })
         socket.on('stock:get_tickers', (data) =>{        	
         	var stock_list = JSON.parse(data.stock_list)
@@ -48,7 +69,7 @@ class App extends React.Component {
     }
 
 	updateDimensions(){
-		console.log('updateDimensions', window.innerWidth, window.innerHeight)
+		// console.log('updateDimensions', window.innerWidth, window.innerHeight)
         this.setState({width: window.innerWidth, height: window.innerHeight});
     }
 
@@ -112,14 +133,19 @@ class App extends React.Component {
 			<div>
 				<div id='content' style={{ flex: 1, overflowY: 'auto', padding: '1.8rem' }}>
 					
-                    <h4>Open Positions</h4>
-                    <Card>
-                    <StockList name={'Open Positions'} 
-						   width={this.state.width} 
-						   height={this.state.height} 
-						   stock={this.state.day} 
-						   socket={this.socket}/>
-					</Card>
+                
+					{
+						_.keys(this.state.open).map((sector, i) =>{
+							return (
+								<StockList key={i} name={sector}
+									width={this.state.width} 
+									height={this.state.height} 
+									stock={this.state.open[sector]} 
+									socket={this.socket}/>
+							)
+						})
+					}	
+
 					<div className={theme['tail']}>
 					<SuccessButton 
 							onClick={this.handleDialogToggle} 
