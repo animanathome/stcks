@@ -50,7 +50,8 @@ class Data(object):
 
 		entry = None
 		for index, row in self.data.iterrows():
-   			date_entry = [index.strftime('%d-%m-%Y')]
+			# NOTE: changing from dmy to mdy since javascript can't initialize the former.
+   			date_entry = [index.strftime('%m-%d-%Y')]
    			for column in self.data.columns.values:
    				date_entry.append(("%.2f" % row[column]))
 

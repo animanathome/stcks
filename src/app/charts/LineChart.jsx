@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import * as d3 from "d3";
 import $ from 'jquery';
 
+import weekday from './weekday.js'
 import theme from './LineChart.css';
 
 var Axis=React.createClass({
@@ -137,6 +138,8 @@ var Legend=React.createClass({
         };
     },
     render: function(){
+        console.log('Legend: render')
+        console.log('x', this.props.x)
 
         var x;
         if(this.props.align > 0){
@@ -145,10 +148,10 @@ var Legend=React.createClass({
             x = this.props.x + 10;
         }
 
+
         // var x = (this.props.x - this.props.width) - 10;
         // var y = this.props.y;
         var y = 0;
-
         var transform = 'translate(' + x + ',' + y + ')';
         
         return (
@@ -443,15 +446,17 @@ var LineChart=React.createClass({
         // console.log('LineChart')
         // console.log('range', this.props.range)
         // console.log(theme)
+        // console.log('weekday', weekday)
+        
         var data = this.props.data;
         if(!data.hasOwnProperty('data')){
             return (
                 <div>Loading...</div>
             )
         }else{
-            // console.log('info', this.props.data.info.yl, this.props.data.info.yh)
-            var parseTime = d3.timeParse("%d-%m-%Y");            
-            var dmyDateFormat = d3.timeFormat("%d/%m/%y");
+            // console.log('info', this.props.data.info.yl, this.props.data.info.yh)            
+            var parseTime = d3.timeParse("%m-%d-%Y");
+            var dmyDateFormat = d3.timeFormat("%m/%d/%y");
 
             var formatAxisDates;
             if(['1Y', '2Y', '3Y', '5Y', '10Y'].indexOf(this.props.range) != -1){
@@ -480,13 +485,24 @@ var LineChart=React.createClass({
             })
             var xrng = d3.extent(dates)
             // console.log('xrng:', xrng)
+
+            var _date;
+            var weekdays = data.data.data.map(function(d){
+                _date = new Date(d[0])
+                return {
+                    'date':formatAxisDates(_date),
+                    'weekday':weekday(_date)
+                }
+            })
+            // console.log('weekday:', weekdays[0])
+            // console.log('invert', weekday(weekday.invert(weekdays[0])))
             
             // close(d) prices
             var cindex = structure.indexOf('close')
             // console.log(cindex)
 
             var cdata = data.data.data.map(function(d, idx){
-                return {'price':+d[cindex], 'day':dates[idx]}
+                return {'price':+d[cindex], 'day':weekdays[idx].weekday}
             })
             this._cdata = cdata
             // console.log('close', cdata)
@@ -494,7 +510,7 @@ var LineChart=React.createClass({
             // 20d moving averages
             var ma20index = structure.indexOf('20sma')
             var ma20data = data.data.data.map(function(d, idx){
-                return {'price':+d[ma20index], 'day':dates[idx]}
+                return {'price':+d[ma20index], 'day':weekdays[idx].weekday}
             })
             this._ma20data = ma20data
             // console.log('ma20data', ma20data)
@@ -502,7 +518,7 @@ var LineChart=React.createClass({
             // 50d moving averages
             var ma50index = structure.indexOf('50sma')
             var ma50data = data.data.data.map(function(d, idx){
-                return {'price':+d[ma50index], 'day':dates[idx]}
+                return {'price':+d[ma50index], 'day':weekdays[idx].weekday}
             })
             this._ma50data = ma50data
             // console.log('ma50data', ma50data)
@@ -510,7 +526,7 @@ var LineChart=React.createClass({
             // 200d moving averages
             var ma200index = structure.indexOf('200sma')
             var ma200data = data.data.data.map(function(d, idx){
-                return {'price':+d[ma200index], 'day':dates[idx]}
+                return {'price':+d[ma200index], 'day':weekdays[idx].weekday}
             })
             this._ma200data = ma200data
             // console.log('ma200data', ma200data)
@@ -528,15 +544,17 @@ var LineChart=React.createClass({
                 if(yymx > ymx) ymx = yymx
             }
 
-            var x = d3.scaleTime().range([0, width]),
-                y = d3.scaleLinear().range([height, 0]),
-                z = d3.scaleOrdinal(d3.schemeCategory10);
+            // var x = d3.scaleTime().range([0, width])
+            var x = d3.scaleLinear().range([0, width])
+            var y = d3.scaleLinear().range([height, 0])
+            var z = d3.scaleOrdinal(d3.schemeCategory10)
 
             this._x = x;
             this._y = y;
             this._z = z;
             
-            x.domain(xrng);
+            // x.domain(xrng);
+            x.domain(d3.extent(weekdays, function(d){return d.weekday}))
 
             var ymna = ymn-(ymn*.05)
             var ymxa = ymx+(ymx*.05)
@@ -555,7 +573,7 @@ var LineChart=React.createClass({
                   .tickSizeOuter(0)
                   .tickPadding(5)
                   .tickFormat(function(d){
-                        return formatAxisDates(d)
+                        return formatAxisDates(weekday.invert(d))
                     });
 
             // console.log(width)
@@ -588,9 +606,9 @@ var LineChart=React.createClass({
             var lcnt = [];
             var ldpl = [];
             var lalm = 1; // align multiplier (makes the length align left or right to the info line)
-            if(this.state.infoIndex < dates.length-1){
+            if(this.state.infoIndex < dates.length){
                 // legend position
-                lxp = x(dates[this.state.infoIndex])
+                lxp = x(weekdays[this.state.infoIndex].weekday)
                 lyp = y(cdata[this.state.infoIndex].price)
 
                 // console.log('xp', lxp/width)
