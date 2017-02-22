@@ -138,8 +138,8 @@ var Legend=React.createClass({
         };
     },
     render: function(){
-        console.log('Legend: render')
-        console.log('x', this.props.x)
+        // console.log('Legend: render')
+        // console.log('x', this.props.x)
 
         var x;
         if(this.props.align > 0){
@@ -326,7 +326,7 @@ var LineChart=React.createClass({
             data: null,
             positions: {},
             activeIndex: null,
-            display:[false, false, false],
+            display:[false, false, false, false],
             infoVisibility:false,
             infoIndex:0
         };
@@ -336,7 +336,7 @@ var LineChart=React.createClass({
             data:{key:'',value:''},
             positions:null,
             activeIndex: null,
-            display:[false, false, false],
+            display:[false, false, false, false],
             infoVisibility:false,
             infoIndex:0
         };
@@ -531,6 +531,14 @@ var LineChart=React.createClass({
             this._ma200data = ma200data
             // console.log('ma200data', ma200data)
 
+            // bolling bands
+            var blbindex = structure.indexOf('blb')
+            var bubindex = structure.indexOf('bub')
+            var bbdata = data.data.data.map(function(d, idx){
+                return {'blb':+d[blbindex], 'bub':+d[bubindex], 'day':weekdays[idx].weekday}
+            })
+            this._bbdata = bbdata
+
             // get y (price) min and max
             var ymn = d3.min(cdata, function(d) { return d.price; })
             var ymx = d3.max(cdata, function(d) { return d.price; })
@@ -562,6 +570,7 @@ var LineChart=React.createClass({
             y.domain([ymna, ymxa])
             z.domain(structure);
 
+            // console.log('structure', structure)
             // console.log('ma20color', z('20d'))
             
             // positions
@@ -596,6 +605,19 @@ var LineChart=React.createClass({
                 .defined(function(d){
                     return !isNaN(d.price)
                 });
+
+            var area = d3.area()
+                .x(function(d) { 
+                    return x(d.day); 
+                })
+                .y0(function(d) { 
+                    // console.log(y(d.blb))
+                    return y(d.blb); 
+                })
+                .y1(function(d) { 
+                    // console.log(y(d.bub))
+                    return y(d.bub); 
+                })
 
             var transform='translate(' + margin.left + ',' + margin.top + ')';
 
@@ -635,6 +657,12 @@ var LineChart=React.createClass({
                     lcnt.push('SMA200: '+this.getAttributeAtIndex(ma200data, this.state.infoIndex, 'price'))
                     ldpl.push(true)
                 }
+                if(this.props.display[3]){
+                    lcnt.push('BUB: '+this.getAttributeAtIndex(bbdata, this.state.infoIndex, 'bub'))
+                    lcnt.push('BLB: '+this.getAttributeAtIndex(bbdata, this.state.infoIndex, 'blb'))
+                    ldpl.push(true)
+                    ldpl.push(true)
+                }
                 // console.log(lcnt)
             }
 
@@ -653,7 +681,8 @@ var LineChart=React.createClass({
                             {this.props.display[0] ? <path className={theme["line"]+" "+theme["shadow"]} stroke={z('20d')} d={line(ma20data)} strokeLinecap="round"/>:null}
                             {this.props.display[1] ? <path className={theme["line"]+" "+theme["shadow"]} stroke={z('50d')} d={line(ma50data)} strokeLinecap="round"/>:null}
                             {this.props.display[2] ? <path className={theme["line"]+" "+theme["shadow"]} stroke={z('200d')} d={line(ma200data)} strokeLinecap="round"/>:null}
-                                                        
+                            {this.props.display[3] ? <path className={theme["area"]} d={area(bbdata)} fill={z('bub')}/>:null}
+
                             <Positions id="positions" 
                                 color={"rgba(70, 130, 180, 0.1)"} 
                                 height={height} x={x} 
@@ -672,9 +701,9 @@ var LineChart=React.createClass({
 
 
                             {this.state.infoVisibility ? <Info x={x} y={y} index={this.state.infoIndex} data={cdata} fill={z('close')}/>:null}
-                            {this.props.display[0] && this.state.infoVisibility ? <Info x={x} y={y} index={this.state.infoIndex} data={ma20data} fill={z('20d')}/>:null}
-                            {this.props.display[1] && this.state.infoVisibility ? <Info x={x} y={y} index={this.state.infoIndex} data={ma50data} fill={z('50d')}/>:null}
-                            {this.props.display[2] && this.state.infoVisibility ? <Info x={x} y={y} index={this.state.infoIndex} data={ma200data} fill={z('200d')}/>:null}                            
+                            {this.props.display[0] && this.state.infoVisibility ? <Info x={x} y={y} index={this.state.infoIndex} data={ma20data} fill={z('20sma')}/>:null}
+                            {this.props.display[1] && this.state.infoVisibility ? <Info x={x} y={y} index={this.state.infoIndex} data={ma50data} fill={z('50sma')}/>:null}
+                            {this.props.display[2] && this.state.infoVisibility ? <Info x={x} y={y} index={this.state.infoIndex} data={ma200data} fill={z('200sma')}/>:null}                            
                         </g>
                     </svg>
                 </div>

@@ -61,6 +61,10 @@ class TickerData(Data):
 		self._ma_()
 		self._bb_()
 
+	def get_overlays(self):
+		# get out (sell) position value
+		pass
+
 	def collect_data(self):
 		self.get_data()
 		self.get_indicators()

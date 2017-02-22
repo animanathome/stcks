@@ -32,7 +32,8 @@ class StockGraph extends React.Component {
 			display:{
 				'SMA20': false,
 				'SMA50': false,
-				'SMA200': false
+				'SMA200': false,
+				'BB': false,
 			},
 			
 			// add position
@@ -46,7 +47,7 @@ class StockGraph extends React.Component {
 		this.memory = {
 			data:{},
 			range:'1Y',
-			indicators:['SMA20', 'SMA50', 'SMA200']
+			indicators:['SMA20', 'SMA50', 'SMA200', 'BB']
 		}
 		this.time_range = {
 			'1M': 20,
@@ -201,7 +202,7 @@ class StockGraph extends React.Component {
 		var range_options = ['1M', '3M', '6M', '1Y', '3Y', '5Y', '10Y']
 		var indicator_options = [
 			// 'BB', 'EMA', 'KC', 'MAE', 'PSAR', 'PC', 
-			'SMA20', 'SMA50', 'SMA200'
+			'SMA20', 'SMA50', 'SMA200', 'BB'
 		]
 
 		return (
