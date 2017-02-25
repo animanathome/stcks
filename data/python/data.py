@@ -53,7 +53,10 @@ class Data(object):
 			# NOTE: changing from dmy to mdy since javascript can't initialize the former.
    			date_entry = [index.strftime('%m-%d-%Y')]
    			for column in self.data.columns.values:
-   				date_entry.append(("%.2f" % row[column]))
+   				if type(row[column]) == str:
+   					date_entry.append(row[column])
+   				else:
+   					date_entry.append(("%.2f" % row[column]))
 
    			data['data'].append(date_entry)
 		

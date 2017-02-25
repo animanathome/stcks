@@ -22,178 +22,181 @@ from matplotlib.finance import candlestick_ohlc
 
 
 from ticker_info import get_ticker_value_info, get_ticker_info, get_all_tickers
+from ticker_positions import active_positions
+from ticker_data import TickerData
+from ticker_positions import TickerPositions
 
 start = datetime.datetime(2017, 1, 25)
 end = datetime.date.today()
 
-class Ticker(object):
-	# collect all ticker data
-	def __init__(self, ticker='TSLA', duration=520, verbose=True):
-		self.ticker = ticker
-		self.data_dir = os.path.join(os.path.dirname(__file__), '..', 'data')
-		self.position_dir = os.path.join(os.path.dirname(__file__),'..', 'positions')
-		self.data = None
-		self.info = None
-		self.duration = duration # duration in weeks
-		self.verbose = verbose		
+# class Ticker(object):
+# 	# collect all ticker data
+# 	def __init__(self, ticker='TSLA', duration=520, verbose=True):
+# 		self.ticker = ticker
+# 		self.data_dir = os.path.join(os.path.dirname(__file__), '..', 'data')
+# 		self.position_dir = os.path.join(os.path.dirname(__file__),'..', 'positions')
+# 		self.data = None
+# 		self.info = None
+# 		self.duration = duration # duration in weeks
+# 		self.verbose = verbose		
 
-	def data_file(self):
-		return os.path.join(self.data_dir, self.ticker+'.json')
+# 	def data_file(self):
+# 		return os.path.join(self.data_dir, self.ticker+'.json')
 
-	def data_exists(self):
-		if not os.path.exists(self.data_file()):
-			if self.verbose:
-				print self.data_file(), 'does not exist'
-			return False
-		return True
+# 	def data_exists(self):
+# 		if not os.path.exists(self.data_file()):
+# 			if self.verbose:
+# 				print self.data_file(), 'does not exist'
+# 			return False
+# 		return True
 
-	def write_data(self):
-		# combine all data
-		if self.verbose:
-			print self.ticker, 'write_data' 
+# 	def write_data(self):
+# 		# combine all data
+# 		if self.verbose:
+# 			print self.ticker, 'write_data' 
 
-		data = {}
-		data['structure'] = ['date']
-		data['structure'].extend(self.data.columns.values)
-		data['data'] = []
+# 		data = {}
+# 		data['structure'] = ['date']
+# 		data['structure'].extend(self.data.columns.values)
+# 		data['data'] = []
 
-		entry = None
-		for index, row in self.data.iterrows():
-   			date_entry = [index.strftime('%d-%m-%Y')]
-   			for column in self.data.columns.values:
-   				date_entry.append(("%.2f" % row[column]))
+# 		entry = None
+# 		for index, row in self.data.iterrows():
+#    			date_entry = [index.strftime('%d-%m-%Y')]
+#    			for column in self.data.columns.values:
+#    				date_entry.append(("%.2f" % row[column]))
 
-   			data['data'].append(date_entry)
+#    			data['data'].append(date_entry)
 		
-		combined = {}
-		combined['info'] = self.info
-		combined['data'] = data
-		with open(self.data_file(), 'w') as outfile:
-			json.dump(combined, outfile)
+# 		combined = {}
+# 		combined['info'] = self.info
+# 		combined['data'] = data
+# 		with open(self.data_file(), 'w') as outfile:
+# 			json.dump(combined, outfile)
 
-	def get_info(self):
-		# collect general company information (name, category, ...)
-		if self.verbose:
-			print self.ticker, 'get_info'
+# 	def get_info(self):
+# 		# collect general company information (name, category, ...)
+# 		if self.verbose:
+# 			print self.ticker, 'get_info'
 
-		self.info = get_ticker_info(self.ticker)
-		# create some template data
-		if not self.info:
-			self.info = {'nme':self.ticker, 'sbl':self.ticker}
+# 		self.info = get_ticker_info(self.ticker)
+# 		# create some template data
+# 		if not self.info:
+# 			self.info = {'nme':self.ticker, 'sbl':self.ticker}
 
-		self.info.update(get_ticker_value_info(self.ticker))
-		# print self.info
+# 		self.info.update(get_ticker_value_info(self.ticker))
+# 		# print self.info
 
-	def get_data(self, force=False):		
-		# get_data through web.DataReader
-		# NOTE: since this api is very limited to the amount of data we can query we'll
-		# surely add additional methods in the future 
-		if self.verbose:
-			print self.ticker, 'get_data'
+# 	def get_data(self, force=False):		
+# 		# get_data through web.DataReader
+# 		# NOTE: since this api is very limited to the amount of data we can query we'll
+# 		# surely add additional methods in the future 
+# 		if self.verbose:
+# 			print self.ticker, 'get_data'
 
-		end = datetime.date.today()
-		start = end - relativedelta(weeks=self.duration)		
-		self._ohlc_adj_(web.DataReader(self.ticker, "yahoo", start, end))
+# 		end = datetime.date.today()
+# 		start = end - relativedelta(weeks=self.duration)		
+# 		self._ohlc_adj_(web.DataReader(self.ticker, "yahoo", start, end))
 
-	def _ohlc_adj_(self, dat):
-		# This function adjusts stock data for splits, dividends, etc., returning a data frame with
-		# "Open", "High", "Low" and "Close" columns. The input DataFrame is similar to that returned
-		# by pandas Yahoo! Finance API.    
-		self.data = pd.DataFrame({"open": dat["Open"] * dat["Adj Close"] / dat["Close"],
-					   "high": dat["High"] * dat["Adj Close"] / dat["Close"],
-					   "low": dat["Low"] * dat["Adj Close"] / dat["Close"],
-					   "close": dat["Adj Close"], "volume": dat['Volume']})
-	def _ma_(self):
-		self.data["20d"] = np.round(self.data["close"].rolling(window = 20, center = False).mean(), 2)
-		self.data["50d"] = np.round(self.data["close"].rolling(window = 50, center = False).mean(), 2)
-		self.data["200d"] = np.round(self.data["close"].rolling(window = 200, center = False).mean(), 2)
+# 	def _ohlc_adj_(self, dat):
+# 		# This function adjusts stock data for splits, dividends, etc., returning a data frame with
+# 		# "Open", "High", "Low" and "Close" columns. The input DataFrame is similar to that returned
+# 		# by pandas Yahoo! Finance API.    
+# 		self.data = pd.DataFrame({"open": dat["Open"] * dat["Adj Close"] / dat["Close"],
+# 					   "high": dat["High"] * dat["Adj Close"] / dat["Close"],
+# 					   "low": dat["Low"] * dat["Adj Close"] / dat["Close"],
+# 					   "close": dat["Adj Close"], "volume": dat['Volume']})
+# 	def _ma_(self):
+# 		self.data["20d"] = np.round(self.data["close"].rolling(window = 20, center = False).mean(), 2)
+# 		self.data["50d"] = np.round(self.data["close"].rolling(window = 50, center = False).mean(), 2)
+# 		self.data["200d"] = np.round(self.data["close"].rolling(window = 200, center = False).mean(), 2)
 
-	def get_indicators(self):
-		if self.verbose:
-			print self.ticker, 'get_indicators'
+# 	def get_indicators(self):
+# 		if self.verbose:
+# 			print self.ticker, 'get_indicators'
 
-		self._ma_()
+# 		self._ma_()
 
-	def position_file(self):
-		return os.path.join(self.position_dir, self.ticker+'.json')
+# 	def position_file(self):
+# 		return os.path.join(self.position_dir, self.ticker+'.json')
 
-	def position_exists(self):
-		if not os.path.exists(self.position_file()):
-			if self.verbose:
-				print self.position_file(), 'does not exist'
-			return False
-		return True
+# 	def position_exists(self):
+# 		if not os.path.exists(self.position_file()):
+# 			if self.verbose:
+# 				print self.position_file(), 'does not exist'
+# 			return False
+# 		return True
 
-	def get_positions(self):
-		ma_diff_str = "20d - 50d"
-		self.data[ma_diff_str] = self.data["20d"] - self.data["50d"]
-		self.data["regime"] = np.where(self.data[ma_diff_str] > 0, 1, 0)
-		self.data["regime"] = np.where(self.data[ma_diff_str] < 0, -1, self.data["regime"])
+# 	def get_positions(self):
+# 		ma_diff_str = "20d - 50d"
+# 		self.data[ma_diff_str] = self.data["20d"] - self.data["50d"]
+# 		self.data["regime"] = np.where(self.data[ma_diff_str] > 0, 1, 0)
+# 		self.data["regime"] = np.where(self.data[ma_diff_str] < 0, -1, self.data["regime"])
 
-		# To ensure that all trades close out, I temporarily change the regime of the last row to 0
-		regime_orig = self.data.ix[-1, "regime"]
-		# self.data.ix[-1, "regime"] = 0
-		self.data["signal"] = np.sign(self.data["regime"] - self.data["regime"].shift(1))
-		# # Restore original regime data
-		self.data.ix[-1, "regime"] = regime_orig
+# 		# To ensure that all trades close out, I temporarily change the regime of the last row to 0
+# 		regime_orig = self.data.ix[-1, "regime"]
+# 		# self.data.ix[-1, "regime"] = 0
+# 		self.data["signal"] = np.sign(self.data["regime"] - self.data["regime"].shift(1))
+# 		# # Restore original regime data
+# 		self.data.ix[-1, "regime"] = regime_orig
 		
-		signals = pd.concat([
-            pd.DataFrame({"price": self.data.loc[self.data["signal"] == 1, "close"],
-                         "regime": self.data.loc[self.data["signal"] == 1, "regime"],
-                         "signal": "open"}),
-            pd.DataFrame({"price": self.data.loc[self.data["signal"] == -1, "close"],
-                         "regime": self.data.loc[self.data["signal"] == -1, "regime"],
-                         "signal": "close"}),
-        ])		
-		signals.index = pd.MultiIndex.from_product([signals.index], names = ["date", "symbol"])
-		signals.sort_index(inplace = True)
-		signals.drop('regime', axis=1, inplace=True)
-		self.positions = signals
+# 		signals = pd.concat([
+#             pd.DataFrame({"price": self.data.loc[self.data["signal"] == 1, "close"],
+#                          "regime": self.data.loc[self.data["signal"] == 1, "regime"],
+#                          "signal": "open"}),
+#             pd.DataFrame({"price": self.data.loc[self.data["signal"] == -1, "close"],
+#                          "regime": self.data.loc[self.data["signal"] == -1, "regime"],
+#                          "signal": "close"}),
+#         ])		
+# 		signals.index = pd.MultiIndex.from_product([signals.index], names = ["date", "symbol"])
+# 		signals.sort_index(inplace = True)
+# 		signals.drop('regime', axis=1, inplace=True)
+# 		self.positions = signals
 
-	def last_position(self):
-		return self.positions['signal'][-1]
+# 	def last_position(self):
+# 		return self.positions['signal'][-1]
 
-	def write_positions(self):
-		if self.verbose:
-			print self.ticker, 'write_position'
+# 	def write_positions(self):
+# 		if self.verbose:
+# 			print self.ticker, 'write_position'
 
-		data = {}
-		data['structure'] = ['date']
-		data['structure'].extend(self.positions.columns.values)
-		data['data'] = []
+# 		data = {}
+# 		data['structure'] = ['date']
+# 		data['structure'].extend(self.positions.columns.values)
+# 		data['data'] = []
 
-		entry = None
-		for index, row in self.positions.iterrows():
-   			date_entry = [index.strftime('%d-%m-%Y')]
-   			for column in self.positions.columns.values:
-   				if type(row[column]) == str:
-   					date_entry.append(row[column])
-   				else:
-   					date_entry.append(("%.2f" % row[column]))
+# 		entry = None
+# 		for index, row in self.positions.iterrows():
+#    			date_entry = [index.strftime('%d-%m-%Y')]
+#    			for column in self.positions.columns.values:
+#    				if type(row[column]) == str:
+#    					date_entry.append(row[column])
+#    				else:
+#    					date_entry.append(("%.2f" % row[column]))
 
-   			data['data'].append(date_entry)
+#    			data['data'].append(date_entry)
 
-   		with open(self.position_file(), 'w') as outfile:
-			json.dump(data, outfile)
+#    		with open(self.position_file(), 'w') as outfile:
+# 			json.dump(data, outfile)
 
-		if self.verbose:
-			print 'done writing', self.position_file()
+# 		if self.verbose:
+# 			print 'done writing', self.position_file()
 
-	def collect_data(self):
-		self.get_data()
-		self.get_info()
-		self.get_indicators()
-		self.write_data()
+# 	def collect_data(self):
+# 		self.get_data()
+# 		self.get_info()
+# 		self.get_indicators()
+# 		self.write_data()
 
-		return self
+# 		return self
 
-	def collect_positions(self):
-		self.get_data()
-		self.get_indicators()
-		self.get_positions()
-		self.write_positions()
+# 	def collect_positions(self):
+# 		self.get_data()
+# 		self.get_indicators()
+# 		self.get_positions()
+# 		self.write_positions()
 
-		return self
+# 		return self
 
 def get_all_ticker_data():
 	# get all of price data for each NASDAQ stock
@@ -225,10 +228,16 @@ def get_some_positions(tickers=['BABA', 'FB', 'MSFT', 'NVDA', 'DIS', 'AMD', 'TSL
 def get_all_positions():
 	get_some_positions(get_stock_symbols())
 
-# get_some_tickers()
-# Ticker('NVDA').collect_data()
-# print Ticker('NVDA').collect_positions()
-# get_some_positions()
-# get_all_ticker_data()
-# get_all_positions()
-get_some_tickers()
+def update_all_active_positions():
+	for ticker in active_positions():
+		print ticker
+		TickerPositions(ticker).collect_data()
+
+if __name__ == '__main__':
+	# get_some_tickers()
+	# Ticker('NVDA').collect_data()
+	# print Ticker('NVDA').collect_positions()
+	# get_some_positions()
+	# get_all_ticker_data()
+	# get_all_positions()
+	update_all_active_positions()

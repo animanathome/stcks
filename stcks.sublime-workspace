@@ -4,6 +4,14 @@
 		"selected_items":
 		[
 			[
+				"colle",
+				"collect_data"
+			],
+			[
+				"weekd",
+				"weekdays"
+			],
+			[
 				"week",
 				"weekdays"
 			],
@@ -506,42 +514,50 @@
 			[
 				"prot",
 				"prototype"
-			],
-			[
-				"outp",
-				"outputValue"
-			],
-			[
-				"out",
-				"outputValue"
 			]
 		]
 	},
 	"buffers":
 	[
 		{
-			"file": "src/app/charts/weekday.js",
+			"file": "data/python/pick_ticker.py",
 			"settings":
 			{
-				"buffer_size": 1660,
+				"buffer_size": 2175,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "data/python/ticker_positions.py",
+			"settings":
+			{
+				"buffer_size": 3780,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "src/app/charts/LineChart.jsx",
+			"file": "data/python/back_test.py",
 			"settings":
 			{
-				"buffer_size": 23224,
+				"buffer_size": 4959,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "src/server/routes/socket.js",
+			"file": "data/python/data.py",
 			"settings":
 			{
-				"buffer_size": 7302,
+				"buffer_size": 1859,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "data/python/collect_data.py",
+			"settings":
+			{
+				"buffer_size": 7858,
 				"line_ending": "Unix"
 			}
 		}
@@ -570,12 +586,16 @@
 	"command_palette":
 	{
 		"height": 392.0,
-		"last_filter": "pre",
+		"last_filter": "tty",
 		"selected_items":
 		[
 			[
-				"pre",
+				"tty",
 				"Pretty JSON: Format (Pretty Print) JSON"
+			],
+			[
+				"pre",
+				"Preferences: Pretty JSON Settings - Default"
 			],
 			[
 				"pretty",
@@ -648,35 +668,47 @@
 	"expanded_folders":
 	[
 		"/Users/manu/Code/stcks/",
-		"/Users/manu/Code/stcks//data",
-		"/Users/manu/Code/stcks//src",
-		"/Users/manu/Code/stcks//src/app",
-		"/Users/manu/Code/stcks//src/app/charts"
+		"/Users/manu/Code/stcks//data"
 	],
 	"file_history":
 	[
-		"/Users/manu/Code/stcks/src/app/charts/LineChart.jsx",
-		"/Users/manu/Code/stcks/src/app/charts/weekday.js",
-		"/Users/manu/Code/stcks/src/app/stockgraph.jsx",
-		"/Users/manu/Code/stcks/src/app/stockitem.jsx",
-		"/Users/manu/Code/stcks/data/python/ticker_data.py",
-		"/Users/manu/Code/stcks/notes.txt",
-		"/Users/manu/Code/stcks/src/app/stocklist.jsx",
+		"/Users/manu/Code/stcks/data/python/back_test.py",
+		"/Users/manu/Code/stcks/data/python/data.py",
+		"/Users/manu/Code/stcks/data/positions/AMD.json",
 		"/Users/manu/Code/stcks/data/data/AMD.json",
+		"/Users/manu/Code/stcks/data/python/collect_data.py",
+		"/Users/manu/Code/stcks/notes.txt",
+		"/Users/manu/Code/stcks/data/me/TSLA.json",
+		"/Users/manu/Code/stcks/data/me/QCOM.json",
+		"/Users/manu/Code/stcks/src/app/charts/weekday.js",
+		"/Users/manu/Code/stcks/src/app/charts/LineChart.jsx",
+		"/Users/manu/Code/stcks/data/python/ticker_data.py",
+		"/Users/manu/Code/stcks/data/me/AMD.json",
+		"/Users/manu/Code/stcks/data/me/AMZN.json",
+		"/Users/manu/Code/stcks/data/me/BIDU.json",
+		"/Users/manu/Code/stcks/data/me/FFIV.json",
+		"/Users/manu/Code/stcks/data/me/ICUI.json",
+		"/Users/manu/Code/stcks/data/me/IDCC.json",
+		"/Users/manu/Code/stcks/data/me/INTC.json",
+		"/Users/manu/Code/stcks/data/me/NFLX.json",
+		"/Users/manu/Code/stcks/data/me/NVDA.json",
+		"/Users/manu/Code/stcks/data/python/pick_ticker.py",
+		"/Users/manu/Code/stcks/src/server/routes/socket.js",
+		"/Users/manu/Code/stcks/data/python/update.py",
+		"/Users/manu/Code/stcks/src/app/charts/LineChart.css",
+		"/Users/manu/Code/stcks/src/app/stockgraph.jsx",
+		"/Users/manu/Code/stcks/data/python/purchase_tickers.py",
+		"/Users/manu/Code/stcks/data/python/ticker_positions.py",
+		"/Users/manu/Code/stcks/data/python/ticker_pick.py",
 		"/Users/manu/Library/Application Support/Sublime Text 3/Packages/Pretty JSON/Pretty JSON.sublime-settings",
+		"/Users/manu/Code/stcks/src/app/charts/dayselect.js",
+		"/Users/manu/Code/stcks/src/app/stockitem.jsx",
+		"/Users/manu/Code/stcks/src/app/stocklist.jsx",
 		"/Users/manu/Code/stcks/data/today.json",
 		"/Users/manu/Code/stcks/src/app/App.js",
-		"/Users/manu/Code/stcks/src/server/routes/socket.js",
-		"/Users/manu/Code/stcks/data/python/collect_data.py",
-		"/Users/manu/Code/stcks/data/python/update.py",
 		"/Users/manu/Code/stcks/data/python/ticker_info.py",
-		"/Users/manu/Code/stcks/data/python/ticker_positions.py",
-		"/Users/manu/Code/stcks/data/python/data.py",
 		"/Users/manu/Code/stcks/data/info/TSLA.json",
 		"/Users/manu/Code/stcks/data/config.json",
-		"/Users/manu/Code/stcks/src/app/charts/LineChart.css",
-		"/Users/manu/Code/stcks/data/python/pick_ticker.py",
-		"/Users/manu/Code/stcks/data/python/purchase_tickers.py",
 		"/Users/manu/Code/stcks/data/python/get_ticker_info.py",
 		"/Users/manu/Code/stcks/data/data/FB.json",
 		"/Users/manu/Code/mashi/public/buttons/camera_controls_mobile1.svg",
@@ -684,7 +716,6 @@
 		"/Users/manu/Code/stcks/src/app/stocklist.css",
 		"/Users/manu/Code/stcks/src/app/stockitem.css",
 		"/Users/manu/Code/stcks/data/ipynb/moving-averages-final.ipynb",
-		"/Users/manu/Code/stcks/data/me/AMD.json",
 		"/Users/manu/Code/stcks/data/me/FB.json",
 		"/Users/manu/Code/stcks/src/app/client.js",
 		"/Users/manu/Code/stcks/src/app/app.css",
@@ -768,21 +799,7 @@
 		"/Users/manu/Code/stock/src/components/D3blackbox.js",
 		"/Users/manu/Code/stock/src/routes.js",
 		"/Users/manu/Code/stock/src/lineChart.js",
-		"/Users/manu/Code/stock/src/stockList.jsx",
-		"/Users/manu/Code/stock/src/header.jsx",
-		"/Users/manu/Code/stock/routes/socket.js",
-		"/Users/manu/Code/stock/client/app.jsx",
-		"/Users/manu/Code/stock/app.js",
-		"/Users/manu/Code/stock/public/index.html",
-		"/Users/manu/Code/stock/client/test.jsx",
-		"/Users/manu/Code/stock/client/components/StockSummary.jsx",
-		"/Users/manu/Code/stock/client/components/StockSummary/index.jsx",
-		"/Users/manu/Code/stock/public/css/style.css",
-		"/Users/manu/Code/stock/client/components/stockSummary.jsx",
-		"/Users/manu/Code/stock/client/stockSummary.jsx",
-		"/Users/manu/Code/stock/public/js/app.js",
-		"/Users/manu/GitHub/ReactJS-Realtime-Chat/untitled.json",
-		"/Users/manu/Code/money/test/d3/stock_range.py"
+		"/Users/manu/Code/stock/src/stockList.jsx"
 	],
 	"find":
 	{
@@ -804,6 +821,10 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"pc",
+			"close",
+			"self.data",
+			"bub",
 			"data.",
 			"l.data",
 			"get_all_ticker_info",
@@ -927,11 +948,7 @@
 			"this._downRight.y-this._tickTriangle",
 			"this._downRight.y",
 			"this.editor.startRange+range_width",
-			"up_left",
-			"this.editor.startRange-range_width",
-			"KeyframeGrid",
-			"this._downRight.y - 50",
-			"this._upleft.y"
+			"up_left"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -950,102 +967,193 @@
 	"groups":
 	[
 		{
-			"sheets":
-			[
-			]
-		},
-		{
-			"selected": 1,
+			"selected": 2,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "src/app/charts/weekday.js",
+					"file": "data/python/pick_ticker.py",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 1660,
+						"buffer_size": 2175,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								508,
-								508
+								1403,
+								1403
 							]
 						],
 						"settings":
 						{
-							"open_with_edit": true,
-							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 2,
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "src/app/charts/LineChart.jsx",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 23224,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								14723,
-								14723
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 7055.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "src/server/routes/socket.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 7302,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								665,
-								665
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
+							"syntax": "Packages/Python/Python.sublime-syntax",
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "data/python/ticker_positions.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3780,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2781,
+								2781
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 844.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "data/python/back_test.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 4959,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								296,
+								296
+							]
+						],
+						"settings":
+						{
+							"history_list_is_closing": true,
+							"open_with_edit": true,
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"translate_tabs_to_spaces": false,
+							"word_wrap": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
 					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "data/python/data.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1859,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1081,
+								1081
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "data/python/collect_data.py",
+					"semi_transient": true,
+					"settings":
+					{
+						"buffer_size": 7858,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								593,
+								593
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				}
+			]
+		},
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 2,
+					"file": "data/python/back_test.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 4959,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3622,
+								3622
+							]
+						],
+						"settings":
+						{
+							"history_list_is_closing": true,
+							"open_with_edit": true,
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"translate_tabs_to_spaces": false,
+							"word_wrap": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 1518.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
 					"type": "text"
 				}
 			]
@@ -1079,7 +1187,7 @@
 		"cols":
 		[
 			0.0,
-			0.512237831964,
+			0.474605143856,
 			1.0
 		],
 		"rows":
@@ -1091,7 +1199,7 @@
 	"menu_visible": true,
 	"output.exec":
 	{
-		"height": 196.0
+		"height": 272.0
 	},
 	"output.find_results":
 	{
@@ -1111,24 +1219,100 @@
 		"selected_items":
 		[
 			[
-				"socket",
-				"src/server/routes/socket.js"
+				"back_test",
+				"data/python/back_test.py"
+			],
+			[
+				"tickerp",
+				"data/python/ticker_positions.py"
+			],
+			[
+				"data",
+				"data/python/data.py"
+			],
+			[
+				"back",
+				"data/python/back_test.py"
+			],
+			[
+				"back_etst",
+				"data/python/back_test.py"
+			],
+			[
+				"notes",
+				"notes.txt"
+			],
+			[
+				"ticker_data",
+				"data/python/ticker_data.py"
+			],
+			[
+				"pur",
+				"data/python/purchase_tickers.py"
+			],
+			[
+				"colle",
+				"data/python/collect_data.py"
+			],
+			[
+				"linechar",
+				"src/app/charts/LineChart.jsx"
+			],
+			[
+				"collect",
+				"data/python/collect_data.py"
+			],
+			[
+				"amd",
+				"data/positions/AMD.json"
+			],
+			[
+				"ticker_dat",
+				"data/python/ticker_data.py"
 			],
 			[
 				"line",
 				"src/app/charts/LineChart.jsx"
 			],
 			[
-				"weekd",
-				"src/app/charts/weekday.js"
+				"collec",
+				"data/python/collect_data.py"
 			],
 			[
-				"amd",
-				"data/data/AMD.json"
+				"coll",
+				"data/python/collect_data.py"
+			],
+			[
+				"linech",
+				"src/app/charts/LineChart.jsx"
 			],
 			[
 				"stock",
 				"src/app/stockgraph.jsx"
+			],
+			[
+				"linec",
+				"src/app/charts/LineChart.css"
+			],
+			[
+				"ticker_dta",
+				"data/python/ticker_data.py"
+			],
+			[
+				"up",
+				"data/python/update.py"
+			],
+			[
+				"week",
+				"src/app/charts/weekday.js"
+			],
+			[
+				"socket",
+				"src/server/routes/socket.js"
+			],
+			[
+				"weekd",
+				"src/app/charts/weekday.js"
 			],
 			[
 				"stockitem",
@@ -1143,20 +1327,8 @@
 				"src/app/stockgraph.jsx"
 			],
 			[
-				"linec",
-				"src/app/charts/LineChart.jsx"
-			],
-			[
 				"amd.",
 				"data/data/AMD.json"
-			],
-			[
-				"notes",
-				"notes.txt"
-			],
-			[
-				"ticker_dta",
-				"data/python/ticker_data.py"
 			],
 			[
 				"ticker",
@@ -1187,10 +1359,6 @@
 				"data/python/ticker_info.py"
 			],
 			[
-				"data",
-				"data/python/data.py"
-			],
-			[
 				"n",
 				"notes.txt"
 			],
@@ -1215,10 +1383,6 @@
 				"src/app/charts/LineChart.jsx"
 			],
 			[
-				"linechar",
-				"src/app/charts/LineChart.jsx"
-			],
-			[
 				"stockgra",
 				"src/app/stockgraph.jsx"
 			],
@@ -1227,16 +1391,8 @@
 				"data/data/FB.json"
 			],
 			[
-				"collect",
-				"data/python/collect_data.py"
-			],
-			[
 				"get_tic",
 				"data/python/get_ticker_info.py"
-			],
-			[
-				"colle",
-				"data/collect_data.py"
 			],
 			[
 				"stockgraph",
@@ -1255,20 +1411,12 @@
 				"data/python/update.py"
 			],
 			[
-				"linech",
-				"src/app/charts/LineChart.jsx"
-			],
-			[
 				"get_ti",
 				"data/python/get_ticker_info.py"
 			],
 			[
 				"to",
 				"data/today.json"
-			],
-			[
-				"collec",
-				"data/collect_data.py"
 			],
 			[
 				"client",
@@ -1392,10 +1540,6 @@
 			],
 			[
 				"col",
-				"datagen/collect_data.py"
-			],
-			[
-				"coll",
 				"datagen/collect_data.py"
 			],
 			[
@@ -1585,42 +1729,6 @@
 			[
 				"version",
 				"main/lib/collections/versions.js"
-			],
-			[
-				"fi",
-				"main/server/fixtures.js"
-			],
-			[
-				"prog",
-				"main/packages/animanatwork:ui/progress_bar.js"
-			],
-			[
-				"sig",
-				"main/client/templates/signup/signup.js"
-			],
-			[
-				"log",
-				"main/client/templates/login/login.js"
-			],
-			[
-				"sign",
-				"main/client/templates/signup/signup.html"
-			],
-			[
-				"login",
-				"main/client/templates/login/login.js"
-			],
-			[
-				"blo",
-				"main/client/templates/blog/blog.html"
-			],
-			[
-				"signup",
-				"main/client/templates/signup/signup.js"
-			],
-			[
-				"hea",
-				"main/client/templates/main/header.js"
 			]
 		],
 		"width": 0.0
@@ -1643,14 +1751,14 @@
 		],
 		"width": 518.0
 	},
-	"selected_group": 0,
+	"selected_group": 1,
 	"settings":
 	{
 	},
 	"show_minimap": false,
 	"show_open_files": false,
 	"show_tabs": true,
-	"side_bar_visible": true,
+	"side_bar_visible": false,
 	"side_bar_width": 227.0,
 	"status_bar_visible": true,
 	"template_settings":

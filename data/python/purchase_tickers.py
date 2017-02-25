@@ -23,3 +23,11 @@ print 'available:',total
 # print QCOM + IDCC + FFIV
 print NFLX + ICUI
 
+
+cash = 2686.09
+
+
+print 'ISRG', cash / 732.08
+print 'TSRO', cash / 189.95
+
+

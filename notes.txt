@@ -7,11 +7,16 @@ x - add sector sections (organize stock per sector/industry)
 x - add year low + high line in stock graph
 - add balance | watchlist| open positions | alert page (stocks which are coming up to be bought or sold)
 - run update.py when adding a position
-- add last updated + total stock count
+- add last updated + total stock count value
 - fix open position display to it doesn't overflow
 - fix legend display so it shows the current date
 - add percentage of position to stock item
-- fix dates so it doesn't display weekends
+x - fix dates so it doesn't display weekends
+- add stock volume
+- update add position from dmy to mdy
+- add option slide window (so we can remove any visible buttons)
+- add toggle show yl + yh
+- define aspect ratio for our charts (so they properly scale)
 
 BE
 - add percentage loss method/strategy
@@ -38,3 +43,6 @@ Education:
 4. Javascript
 	- Callback why?
 	- Asynchronous what?
+
+https://www.quantopian.com/posts/technical-analysis-indicators-without-talib-code
+http://ta-lib.org/function.html

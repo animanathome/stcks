@@ -190,16 +190,20 @@ var Positions=React.createClass({
     },
     getPositionRanges: function(positions){
         // console.log('getPositionRanges', positions)
+        var parseTime = d3.timeParse("%m-%d-%Y");
+
         var result = []
         for(var i = 0; i < positions.length; i++){
             if(positions[i][2] == 'close'){
                 result.push({
                     date: d3.timeDay.offset(positions[i][0], -1),
+                    weekday: weekday(d3.timeDay.offset(positions[i][0], -1)),
                     defined:true
                 })
             }
             result.push({
                 date:positions[i][0], 
+                weekday: weekday(positions[i][0]),
                 defined:positions[i][3]
             })
         }
@@ -210,11 +214,13 @@ var Positions=React.createClass({
         if(positions[li][2] == 'open'){
             result.push({
                 date: d3.timeDay.offset(today, -1),
+                weekday: weekday(d3.timeDay.offset(today, -1)),
                 defined:true
             })
 
             result.push({
                 date: d3.timeDay.offset(today),
+                weekday: weekday(d3.timeDay.offset(today)),
                 defined:false
             })
         }
@@ -224,7 +230,7 @@ var Positions=React.createClass({
     render: function(){
         // console.log('Positions', this.props.color)
 
-        var parseTime = d3.timeParse("%d-%m-%Y");
+        var parseTime = d3.timeParse("%m-%d-%Y");
         var positions = this.props.positions;
         var showPositions = false;
         if(typeof(positions) == 'string'){
@@ -248,7 +254,7 @@ var Positions=React.createClass({
             .curve(d3.curveMonotoneX)
             .x(function(d) { 
               // console.log(x(d.date));
-              return x(d.date); })
+              return x(d.weekday); })
             .y0(height)
             .y1(0.0)
             .defined(function(d){
@@ -489,6 +495,7 @@ var LineChart=React.createClass({
             var _date;
             var weekdays = data.data.data.map(function(d){
                 _date = new Date(d[0])
+                // console.log(_date, d[0])
                 return {
                     'date':formatAxisDates(_date),
                     'weekday':weekday(_date)
@@ -596,6 +603,7 @@ var LineChart=React.createClass({
 
             var line = d3.line()
                 .x(function(d) { 
+                    // console.log(d.day)
                     return x(d.day); 
                 })
                 .y(function(d) { 
