@@ -7,7 +7,7 @@ from pandas.tseries.offsets import *
 import datetime
 
 class Data(object):
-	def __init__(self, ticker, subdir='data', verbose=True):
+	def __init__(self, ticker, subdir='data', verbose=False):
 		self.ticker = ticker		
 		self.data_dir = None
 		self.data = None
