@@ -4,6 +4,14 @@
 		"selected_items":
 		[
 			[
+				"input",
+				"input_arrays"
+			],
+			[
+				"low",
+				"lowerband"
+			],
+			[
 				"mac",
 				"macddiff_name"
 			],
@@ -506,14 +514,6 @@
 			[
 				"ZO",
 				"ZOOMAXIS"
-			],
-			[
-				"mv",
-				"movementY"
-			],
-			[
-				"mvo",
-				"movementX"
 			]
 		]
 	},
@@ -523,8 +523,16 @@
 			"file": "data/python/ticker_data.py",
 			"settings":
 			{
-				"buffer_size": 8513,
+				"buffer_size": 4720,
 				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "notes.txt",
+			"settings":
+			{
+				"buffer_size": 1615,
 				"line_ending": "Unix"
 			}
 		}
@@ -790,6 +798,8 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"input_arrays",
+			"a",
 			"df",
 			"Close",
 			"macddiff_name",
@@ -915,9 +925,7 @@
 			"_tick_range",
 			"_geometry",
 			"_time_line",
-			"_end_soft_range",
-			"_start_soft_range",
-			"addGraphArea"
+			"_end_soft_range"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -936,7 +944,7 @@
 	"groups":
 	[
 		{
-			"selected": 0,
+			"selected": 1,
 			"sheets":
 			[
 				{
@@ -945,15 +953,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 8513,
+						"buffer_size": 4720,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								5466,
-								5466
+								4210,
+								4210
 							]
 						],
 						"settings":
@@ -965,14 +973,37 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "notes.txt",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1615,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1414,
+								1414
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Text/Plain text.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
 					"stack_index": 0,
 					"type": "text"
 				}
-			]
-		},
-		{
-			"sheets":
-			[
 			]
 		}
 	],
@@ -993,18 +1024,11 @@
 				0,
 				1,
 				1
-			],
-			[
-				1,
-				0,
-				2,
-				1
 			]
 		],
 		"cols":
 		[
 			0.0,
-			0.507049883139,
 			1.0
 		],
 		"rows":
@@ -1035,6 +1059,10 @@
 		"last_filter": "",
 		"selected_items":
 		[
+			[
+				"notes",
+				"notes.txt"
+			],
 			[
 				"ticker",
 				"data/python/ticker_data.py"
@@ -1074,10 +1102,6 @@
 			[
 				"back_etst",
 				"data/python/back_test.py"
-			],
-			[
-				"notes",
-				"notes.txt"
 			],
 			[
 				"ticker_data",
@@ -1575,7 +1599,7 @@
 	"show_minimap": false,
 	"show_open_files": false,
 	"show_tabs": true,
-	"side_bar_visible": true,
+	"side_bar_visible": false,
 	"side_bar_width": 227.0,
 	"status_bar_visible": true,
 	"template_settings":
