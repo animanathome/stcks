@@ -26,6 +26,9 @@ def balance():
 
 def active_positions():
 	_folder = os.path.join(os.path.dirname(__file__), '../me')
+	if not os.path.exists(_folder):
+		print 'Unable to find', _folder
+		return []
 	return [item.split('.')[0] for item in os.listdir(_folder)]
 
 def ticker_position(ticker, current_price=None):

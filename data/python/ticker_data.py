@@ -113,19 +113,23 @@ class TickerData(Data):
 		pass
 
 	def collect_data(self):
+		if self.verbose:
+			print self.ticker, 'collect_data'
+
 		self.get_data()
 		self.get_overlap_studies()
 		self.get_momentum_indicators()
 		self.get_volume_indicators()
 		self.get_volatility_indicators()
-		# self.write_data()
+		self.write_data()
 		return self
 
 def get_some_ticker_data(tickers=['BABA', 'FB', 'MSFT', 'NVDA', 'DIS', 'AMD', 'TSLA', 'GOOGL', 'INTC']):
+	print 'get_some_ticker_data', tickers
 	for ticker in tickers:
 		try:
-			TickerData(ticker).collect_data()
-		except:			
+			TickerData(ticker=ticker, verbose=True).collect_data()
+		except:
 			pass
 
 def get_all_ticker_data():
@@ -138,5 +142,5 @@ def get_all_ticker_data():
 if __name__ == '__main__':
 	# result = get_ticker_value_info()
 	# print 'result:', result
-	# TickerInfo().collect_data()
+	# TickerData().collect_data()# 
 	get_some_ticker_data()

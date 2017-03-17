@@ -6,6 +6,7 @@ import theme from './stockgraph.css';
 import {Tab, Tabs} from 'react-toolbox';
 
 import LineChart from './charts/LineChart.jsx'
+import BarChart from './charts/BarChart.jsx';
 import ButtonGroup from './ui/ButtonGroup.jsx';
 import RadioButtonGroup from './ui/RadioButtonGroup.jsx';
 
@@ -216,7 +217,11 @@ class StockGraph extends React.Component {
 						   range={this.state.range}
 						   me={this.state.me} 
 						   data={this.state.data} 
-						   chartId={this.props.symbol+'_chartId'}/>
+						   chartId={this.props.symbol+'_lineChartId'}/>
+
+				<BarChart width={this.props.width}
+						  data={this.state.data}
+						  chartId={this.props.symbol+'_barChartId'}/>
 				
 				<div className={theme['stock_item_menu']}>
 					<div className={theme['stock_item_rng']}>

@@ -44,22 +44,27 @@ class Data(object):
 			print self.ticker, 'write_data' 
 
 		data = {}
-		data['structure'] = ['date']
-		data['structure'].extend(self.data.columns.values)
+		data['structure'] = []
+		data['structure'].extend([str(item).lower() for item in self.data.columns.values])
 		data['data'] = []
 
 		entry = None
 		for index, row in self.data.iterrows():
-			# NOTE: changing from dmy to mdy since javascript can't initialize the former.
-   			date_entry = [index.strftime('%m-%d-%Y')]
+			# IMPORTANT: changing from dmy to mdy since javascript can't initialize the former. 
+   			date_entry = []
    			for column in self.data.columns.values:
-   				if type(row[column]) == str:
+   				if type(row[column]).__name__ == "Timestamp":
+   					date_entry.append(row[column].strftime('%m-%d-%Y'))
+   				elif type(row[column]) == str:
    					date_entry.append(row[column])
    				else:
    					date_entry.append(("%.2f" % row[column]))
 
    			data['data'].append(date_entry)
 		
+		if self.verbose:
+			print '\t', self.data_file() 
+
 		with open(self.data_file(), 'w') as outfile:
 			json.dump(data, outfile)
 

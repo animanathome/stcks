@@ -6,7 +6,7 @@ import pandas_datareader.data as web
 from datetime import date, datetime, timedelta
 from ticker_info import get_ticker_info, get_ticker_value_info
 from ticker_positions import ticker_position, active_positions
-from ticker_data import TickerData
+from ticker_data import TickerData, get_some_ticker_data
 
 # def balance():
 # 	# get the total value of all positions
@@ -26,6 +26,9 @@ from ticker_data import TickerData
 # 		spv[item].update({'pp':pp})
 
 # 	return spv
+
+def details():
+	get_some_ticker_data(active_positions())
 
 def today():
 	# get a stock update for each active stock
@@ -103,5 +106,6 @@ def today():
 		json.dump(stocks, outfile)
 
 if __name__ == '__main__':
-	today()	
+	today()
+	details()
 	# print balance()
