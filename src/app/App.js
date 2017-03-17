@@ -3,8 +3,9 @@ import AppBar from 'react-toolbox/lib/app_bar';
 // import PurpleAppBar from './components/PurpleAppBar.js';
 
 import StockList from './stocklist.jsx'
-
+import { Layout, NavDrawer, Panel, Sidebar } from 'react-toolbox';
 import SuccessButton from './components/SuccessButton.js';
+import {IconButton} from 'react-toolbox/lib/button';
 import Dialog from 'react-toolbox/lib/dialog';
 import Autocomplete from 'react-toolbox/lib/autocomplete';
 import theme from './app.css';
@@ -22,6 +23,7 @@ class App extends React.Component {
 			tickers: {},
 			watch_ticker: [],
 			active: false,
+			sidebarPinned: false,
 			open: [],
 			width: 600,
 			height: 800
@@ -127,11 +129,20 @@ class App extends React.Component {
 		{ label: "Add", onClick: this.handleDialogAdd }
 	]
 
+	toggleSidebar = () => {
+		console.log('toggleSidebar')
+		this.setState({sidebarPinned: !this.state.sidebarPinned});		
+	}
+
 	render() {
 		// console.log('theme', theme)
 		return (
-			<div>
+			<Layout>
+				<Panel>				
 				<div id='content' style={{ flex: 1, overflowY: 'auto', padding: '1.8rem' }}>
+					<div id='toolbar' style={{float: 'right'}}>
+						<IconButton icon='more_vert' onClick={this.toggleSidebar}/>
+					</div>
 					
                 
 					{
@@ -169,7 +180,13 @@ class App extends React.Component {
 						     </div>
 					</Dialog>
 				</div>
-			</div>
+				</Panel>
+				 <Sidebar pinned={ this.state.sidebarPinned } width={ 5 }>                    
+                    <div style={{ flex: 1 }}>
+                        <p>Supplemental content goes here.</p>
+                    </div>
+                </Sidebar>
+			</Layout>
 		);
 	}
 }
