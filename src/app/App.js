@@ -23,6 +23,7 @@ class App extends React.Component {
 		this.state = {
 			tickers: {},
 			watch_ticker: [],
+			display_info:['close'],
 			active: false,
 			sidebarPinned: false,
 			open: [],
@@ -137,6 +138,7 @@ class App extends React.Component {
 
 	onOptionChange = (data) => {
 		console.log('onOptionChange', data)
+		this.setState({display_info:data})
 	}
 
 	render() {
@@ -155,7 +157,8 @@ class App extends React.Component {
 							return (
 								<StockList key={i} name={sector}
 									width={this.state.width} 
-									height={this.state.height} 
+									height={this.state.height}
+									display_info={this.state.display_info} 
 									stock={this.state.open[sector]} 
 									socket={this.socket}/>
 							)

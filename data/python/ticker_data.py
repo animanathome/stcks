@@ -81,7 +81,6 @@ class TickerData(Data):
 		# https://mrjbq7.github.io/ta-lib/func_groups/momentum_indicators.html
 		if self.verbose:
 			print self.ticker, 'get_momentum_indicators'
-
 		_a = ['open', 'high', 'low', 'close', 'volume']
 		inputs = {_a[i]:self.data[_a[i]].values for i in range(len(_a))}
 
@@ -140,7 +139,8 @@ def get_all_ticker_data():
 			pass
 
 if __name__ == '__main__':
+	TickerData().collect_data()
 	# result = get_ticker_value_info()
 	# print 'result:', result
 	# TickerData().collect_data()# 
-	get_some_ticker_data()
+	# get_some_ticker_data()

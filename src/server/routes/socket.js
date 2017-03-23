@@ -128,10 +128,32 @@ var stock = (function(){
 		return get_json_file(jsonPath)	
 	}
 
-	var data = function(symbol, indicators, duration){
+	var data = function(symbol, display, duration){
+		console.log('data', symbol, display, duration)
+
 		// get all price data for the given ticker
 		var jsonPath = path.join(__dirname, '../../..', 'data', 'data', symbol+'.json');
-		return get_json_file(jsonPath)
+
+		// only return the requested content (display) for the given duration
+		var fc = JSON.parse(get_json_file(jsonPath))
+
+		var de = fc['dates'].length;
+		var ds = de - duration;
+
+		var payload = {
+			dates:fc['dates'].splice(ds, de),
+			data:{}
+		}				
+		Object.keys(fc['data']).map(function(e, j){
+			if(display.indexOf(e) == -1){
+				return
+			}
+			payload['data'][e] = {}
+			payload['data'][e]['chart'] = fc['data'][e]['chart']
+			payload['data'][e]['entries'] = fc['data'][e]['entries'].splice(ds, de)
+		})
+		// console.log('\tpayload:', JSON.stringify(payload))
+		return JSON.stringify(payload)
 	}
 
 	return {

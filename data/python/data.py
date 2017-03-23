@@ -5,6 +5,7 @@ import pandas as pd
 import pandas_datareader.data as web
 from pandas.tseries.offsets import *
 import datetime
+import simplejson
 
 class Data(object):
 	def __init__(self, ticker, subdir='data', verbose=False):
@@ -41,32 +42,33 @@ class Data(object):
 	def write_data(self):
 		# combine all data
 		if self.verbose:
-			print self.ticker, 'write_data' 
+			print self.ticker, 'write_data'
 
 		data = {}
-		data['structure'] = []
-		data['structure'].extend([str(item).lower() for item in self.data.columns.values])
-		data['data'] = []
+		# data['structure'] = []
+		# data['structure'].extend([str(item).lower() for item in self.data.columns.values])
+		data['data'] = {}
+		data['dates'] = []
 
 		entry = None
-		for index, row in self.data.iterrows():
-			# IMPORTANT: changing from dmy to mdy since javascript can't initialize the former. 
-   			date_entry = []
-   			for column in self.data.columns.values:
-   				if type(row[column]).__name__ == "Timestamp":
-   					date_entry.append(row[column].strftime('%m-%d-%Y'))
-   				elif type(row[column]) == str:
-   					date_entry.append(row[column])
-   				else:
-   					date_entry.append(("%.2f" % row[column]))
+  		for column in self.data:
+  			if column == 'Date':
+  				data['dates'] = [self.data[column][i].strftime('%m-%d-%Y') for i in range(len(self.data[column].values))]
+  			else:
+  				chart = 'line'
+  				if column == "volume":  					
+  					chart = 'bar'
 
-   			data['data'].append(date_entry)
+  				data['data'][column] = {
+  					'chart': chart,
+  					'entries':[float('{:.2f}'.format(item)) for item in self.data[column].values]
+  				}
 		
 		if self.verbose:
 			print '\t', self.data_file() 
 
 		with open(self.data_file(), 'w') as outfile:
-			json.dump(data, outfile)
+			simplejson.dump(data, outfile, ignore_nan=True)
 
 	def get_value(self, column, index):
 		return self.data[column].values[index]

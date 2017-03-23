@@ -19,8 +19,41 @@ import SuccessButton from './components/SuccessButton.js';
 // import AddPosition from './components/AddPosition.js';
 // import StockAutoComplete from './components/StockAutoComplete.js'
 
+
+class DurationTabs extends React.Component {
+	constructor (props){
+		super(props);
+		this.names = props.tabs;
+		this.state = {
+			index: 1
+		}
+	};	
+
+	handleTabChange = (index) => {
+		console.log('handleTabChange', index)
+		console.log('selected', this.names[index])
+		this.setState({index});
+	};
+
+	render () {
+		// console.log('render')
+		var tabs = Object.keys(this.props.tabs).map(function(d, i){
+			// console.log(i, 'tab', d)
+			return <Tab key={i} label={d}></Tab>
+		})
+
+		return (			
+			<Tabs fixed index={this.state.index} onChange={this.handleTabChange}>
+				{tabs}
+			</Tabs>
+		)
+	}
+}
+
 class StockGraph extends React.Component {
 	constructor(props) {
+		console.log('props:', props)
+
 		super(props);
 		var scope = this;
 		this.gotData = this.gotData.bind(this)
@@ -28,15 +61,7 @@ class StockGraph extends React.Component {
 
 		this.state = {
 			data:[],
-			positions:{},
-			me:{},
-			display:{
-				'SMA20': false,
-				'SMA50': false,
-				'SMA200': false,
-				'BB': false,
-			},
-			
+
 			// add position
 			active: false,
 			action: null,
@@ -47,8 +72,7 @@ class StockGraph extends React.Component {
 		
 		this.memory = {
 			data:{},
-			range:'1Y',
-			indicators:['SMA20', 'SMA50', 'SMA200', 'BB']
+			range:'1Y'
 		}
 		this.time_range = {
 			'1M': 20,
@@ -62,14 +86,14 @@ class StockGraph extends React.Component {
 		}
 
 		this.props.socket.on('stock:get_ticker_data', this.gotData)
-		this.props.socket.on('stock:get_ticker_positions', this.gotPositions)
+		// this.props.socket.on('stock:get_ticker_positions', this.gotPositions)
 	};
 	
-	gotData(data){		
+	gotData(data){
 		if(this.props.symbol != data.stock){
 			return
 		}
-		// console.log('gotData', data)
+		console.log('gotData', data)
 
 		if(data.hasOwnProperty('error')){
 			console.warn('No data available for', this.props.symbol)
@@ -86,8 +110,8 @@ class StockGraph extends React.Component {
 		var scope = this;
 		var query = {}
 		query['symbol'] = this.props.symbol;
-		query['indicators'] = ['price'];
-		query['duration'] = 'month';
+		query['indicators'] = this.props.display_info;
+		query['duration'] = this.time_range['3M'];
 
 		this.props.socket.emit('stock:get_ticker_data', query);
 	}
@@ -131,24 +155,24 @@ class StockGraph extends React.Component {
 	}
 
 	setRange(range){
-		// console.log('setRange', range)
-		if(range == undefined){
-			range = '1Y'
-		}
-		var days = this.time_range[range]
-		// console.log(this.memory)
-		var slice = this.memory.data.data.slice(Math.max(this.memory.data.data.length - days, 1))
-		// console.log(slice)
-		// console.log('structure:', this.memory.data.structure)
+		console.log('setRange', range)
+		// if(range == undefined){
+		// 	range = '1Y'
+		// }
+		// var days = this.time_range[range]
+		// console.log('memory:', this.memory)
+		// var slice = this.memory.data.data.slice(Math.max(this.memory.data.data.length - days, 1))
+		// // console.log(slice)
+		// // console.log('structure:', this.memory.data.structure)
 
-		var data_to_set = {
-			'info': this.memory.data.info,
-			'data': {
-				'data': slice,
-				'structure': this.memory.data.structure
-			}
-		}
-		this.setState({data:data_to_set, 'range':range})
+		// var data_to_set = {
+		// 	'info': this.memory.data.info,
+		// 	'data': {
+		// 		'data': slice,
+		// 		'structure': this.memory.data.structure
+		// 	}
+		// }
+		// this.setState({data:data_to_set, 'range':range})
 	}
 
 	setOverlay(visiblity){
@@ -191,91 +215,13 @@ class StockGraph extends React.Component {
 		// console.log('handleChange')
 		this.setState({...this.state, [item]: value});
 	}
-
-	stockActions = [
-		{value:'open', label:'Open Position'},
-		{value:'close', label:'Close Position'}
-	]
 	
-
 	render(){
-		// console.log("render", this.state)
-		var range_options = ['1M', '3M', '6M', '1Y', '3Y', '5Y', '10Y']
-		var indicator_options = [
-			// 'BB', 'EMA', 'KC', 'MAE', 'PSAR', 'PC', 
-			'SMA20', 'SMA50', 'SMA200', 'BB'
-		]
-
+		console.log('render')
 		return (
 			<div className={theme['stock_item_g']}>
-				<Tabs index={this.state.index} onChange={this.handleTabChange}>
-				</Tabs>
-				<LineChart width={this.props.width} 
-						   display={this.state.display} 
-						   info={this.props.info}
-						   positions={this.state.positions} 
-						   range={this.state.range}
-						   me={this.state.me} 
-						   data={this.state.data} 
-						   chartId={this.props.symbol+'_lineChartId'}/>
-
-				<BarChart width={this.props.width}
-						  data={this.state.data}
-						  chartId={this.props.symbol+'_barChartId'}/>
-				
-				<div className={theme['stock_item_menu']}>
-					<div className={theme['stock_item_rng']}>
-						<RadioButtonGroup activeIndex={3}
-										  callback={this.setRange.bind(this)}
-										  clickables={range_options}/>
-					</div>
-
-					<div className={theme['stock_item_ind']}>
-						<ButtonGroup 
-							callback={this.setOverlay.bind(this)} 
-							clickables={indicator_options}/>
-					</div>
-
-					<div className={theme['stock_item_add']}>
-						<SuccessButton 
-							onClick={this.handleDialogToggle} 
-							icon='add' floating accent mini />
-						<Dialog
-							actions={this.dialogActions}
-							active={this.state.active}
-							onEscKeyDown={this.handleDialogToggle.bind(this)}
-							onOverlayClick={this.handleDialogToggle.bind(this)}
-							title={'Add '+this.props.symbol+' Position'}>
-							<Dropdown
-        						auto
-        						label='Position'
-        						onChange={this.handleChange.bind(this, 'action')}
-        						source= {this.stockActions}
-        						value={this.state.action}
-      						/>
-							<DatePicker 
-								label='Date' sundayFirstDayOfWeek 
-								onChange={this.handleChange.bind(this, 'date')} 
-								value={this.state.date} />
-							<Input 
-								type='number' 
-								label='Value' 
-								name='value' 
-								value={this.state.value} 
-								onChange={this.handleChange.bind(this, 'value')} 
-								/>
-							<Input 
-								type='number' 
-								label='Quantity' 
-								name='quantity' 
-								value={this.state.quantity} 
-								onChange={this.handleChange.bind(this, 'quantity')} 
-								/>
-						</Dialog>
-					</div>
-				</div>
+				<DurationTabs tabs={this.time_range}/>
 			</div>
-
 		)
 	}
 

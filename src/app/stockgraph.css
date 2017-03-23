@@ -1,6 +1,7 @@
 .stock_item_g {
     /*height: 400px;*/
     width: 100%;
+    float: left;
 }
 
 .stock_item_menu{
