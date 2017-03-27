@@ -1,5 +1,6 @@
 import React from 'react'
 import * as d3 from "d3";
+import theme from './Charts.scss';
 
 class LineChart extends React.Component {
 	constructor(props){
@@ -14,6 +15,7 @@ class LineChart extends React.Component {
 	}
 	render(){
 		// console.log('LineChart.render')
+		// console.log('theme', theme)
 		// console.log('data', this.props.data)
 		// console.log('x', this.props.x(this.props.data[0].day))
 		// console.log('y', this.props.y(this.props.data[0].value))
@@ -38,7 +40,7 @@ class LineChart extends React.Component {
 			// });
 
 		return (
-			<path className={"line shadow"}
+			<path className={theme["line"]+' '+theme["shadow"]}
                    stroke={stroke} 
                    d={line(this.props.data)} 
                    strokeLinecap="round"/>

@@ -5,8 +5,10 @@ import Q from 'q';
 import theme from './stockgraph.css';
 import {Tab, Tabs} from 'react-toolbox';
 
-import LineChart from './charts/LineChart.jsx'
-import BarChart from './charts/BarChart.jsx';
+import MultiChart from './charts/MultiChart.jsx'
+
+// import LineChart from './charts/LineChart.jsx'
+// import BarChart from './charts/BarChart.jsx';
 import ButtonGroup from './ui/ButtonGroup.jsx';
 import RadioButtonGroup from './ui/RadioButtonGroup.jsx';
 
@@ -20,30 +22,36 @@ import SuccessButton from './components/SuccessButton.js';
 // import StockAutoComplete from './components/StockAutoComplete.js'
 
 
-class DurationTabs extends React.Component {
+class RangeTabs extends React.Component {
 	constructor (props){
 		super(props);
-		this.names = props.tabs;
+		this.options = Object.keys(this.props.tabs)
 		this.state = {
-			index: 1
+			index: 0
 		}
-	};	
+	}	
 
-	handleTabChange = (index) => {
-		console.log('handleTabChange', index)
-		console.log('selected', this.names[index])
+	handleChange = (index) => {
+		// console.log('handleTabChange', index)
+		// console.log('options:', this.names)
+		// console.log('selected:', this.options[index])
 		this.setState({index});
-	};
+		this.rangeChange(this.options[index])
+	}
+
+	rangeChange = (range) => {
+		this.props.rangeChange(range)
+	}
 
 	render () {
-		// console.log('render')
-		var tabs = Object.keys(this.props.tabs).map(function(d, i){
+		// console.log('render')		
+		var tabs = this.options.map(function(d, i){
 			// console.log(i, 'tab', d)
 			return <Tab key={i} label={d}></Tab>
 		})
 
 		return (			
-			<Tabs fixed index={this.state.index} onChange={this.handleTabChange}>
+			<Tabs fixed index={this.state.index} onChange={this.handleChange}>
 				{tabs}
 			</Tabs>
 		)
@@ -57,7 +65,7 @@ class StockGraph extends React.Component {
 		super(props);
 		var scope = this;
 		this.gotData = this.gotData.bind(this)
-		this.gotPositions = this.gotPositions.bind(this)
+		// this.gotPositions = this.gotPositions.bind(this)
 
 		this.state = {
 			data:[],
@@ -70,10 +78,10 @@ class StockGraph extends React.Component {
 			quantity: null
 		}
 		
-		this.memory = {
-			data:{},
-			range:'1Y'
-		}
+		// this.memory = {
+		// 	data:{},
+		// 	range:'1Y'
+		// }
 		this.time_range = {
 			'1M': 20,
 			'3M': 65,
@@ -99,54 +107,61 @@ class StockGraph extends React.Component {
 			console.warn('No data available for', this.props.symbol)
 		}else{
 			var jdata = JSON.parse(data.stock_data);
-			// this.setState({data:jdata})
-			this.memory.data = jdata
-			this.setRange()
+			this.setState({data:jdata})
+			// this.memory.data = jdata
+			// this.setRange()
 		}
 	}
 
 	getData(){
-		// console.log('getData')
+		console.log('getData')
 		var scope = this;
 		var query = {}
 		query['symbol'] = this.props.symbol;
 		query['indicators'] = this.props.display_info;
-		query['duration'] = this.time_range['3M'];
+		query['duration'] = this.time_range['1M'];
+
+		console.log('\tquery:', query)
 
 		this.props.socket.emit('stock:get_ticker_data', query);
 	}
 
-	gotPositions(data){		
-		if(this.props.symbol != data.stock){
-			return
-		}
-		// console.log('got', data.user, 'stock:get_ticker_positions back', data)
-		if(data.hasOwnProperty('error')){
-			console.warn('No data available for', this.props.symbol)
-		}else{
-			var object = {}
-			object[data.user] = data.stock_data
-			this.setState(object)
-		}
-	}
+	// gotPositions(data){		
+	// 	if(this.props.symbol != data.stock){
+	// 		return
+	// 	}
+	// 	// console.log('got', data.user, 'stock:get_ticker_positions back', data)
+	// 	if(data.hasOwnProperty('error')){
+	// 		console.warn('No data available for', this.props.symbol)
+	// 	}else{
+	// 		var object = {}
+	// 		object[data.user] = data.stock_data
+	// 		this.setState(object)
+	// 	}
+	// }
 
-	getPositions(user){
-		if(user == undefined){
-			user = 'positions'
-		}
-		// console.log('getPositions', user)
+	// getPositions(user){
+	// 	if(user == undefined){
+	// 		user = 'positions'
+	// 	}
+	// 	// console.log('getPositions', user)
 
-		var scope = this;
-		var query = {}
-		query['symbol'] = this.props.symbol;
-		query['user'] = user;
-		this.props.socket.emit('stock:get_ticker_positions', query)
-	}
+	// 	var scope = this;
+	// 	var query = {}
+	// 	query['symbol'] = this.props.symbol;
+	// 	query['user'] = user;
+	// 	this.props.socket.emit('stock:get_ticker_positions', query)
+	// }
 
 	componentDidMount(){
 		this.getData()
-		this.getPositions('positions')
-		this.getPositions('me')	
+		// this.getPositions('positions')
+		// this.getPositions('me')
+	}
+
+	componentWillReceiveProps(nextProps){
+		console.log('componentWillReceiveProps', nextProps)
+		this.getData()
 	}
 
 	componentWillUnmount(){
@@ -154,8 +169,8 @@ class StockGraph extends React.Component {
 		this.props.socket.removeListener('stock:get_ticker_positions', this.gotPositions);
 	}
 
-	setRange(range){
-		console.log('setRange', range)
+	// setRange(range){
+	// 	console.log('setRange', range)
 		// if(range == undefined){
 		// 	range = '1Y'
 		// }
@@ -173,7 +188,7 @@ class StockGraph extends React.Component {
 		// 	}
 		// }
 		// this.setState({data:data_to_set, 'range':range})
-	}
+	// }
 
 	setOverlay(visiblity){
 		// console.log('setOverlay', visiblity)
@@ -215,12 +230,19 @@ class StockGraph extends React.Component {
 		// console.log('handleChange')
 		this.setState({...this.state, [item]: value});
 	}
+
+	rangeChange = (item) => {
+		console.log('rangeChange', item)
+	}
 	
 	render(){
-		console.log('render')
+		console.log('render')	
+		console.log('data:', this.state.data)
+		console.log('display:', this.props.display_info)
 		return (
 			<div className={theme['stock_item_g']}>
-				<DurationTabs tabs={this.time_range}/>
+				<RangeTabs rangeChange={this.rangeChange} tabs={this.time_range}/>
+				<MultiChart width={this.props.width} data={this.state.data}/>
 			</div>
 		)
 	}
