@@ -60,11 +60,11 @@ class RangeTabs extends React.Component {
 
 class StockGraph extends React.Component {
 	constructor(props) {
-		console.log('props:', props)
+		// console.log('props:', props)
 
 		super(props);
 		var scope = this;
-		this.gotData = this.gotData.bind(this)
+		this.receivedData = this.receivedData.bind(this)
 		// this.gotPositions = this.gotPositions.bind(this)
 
 		this.state = {
@@ -93,15 +93,28 @@ class StockGraph extends React.Component {
 			'10Y': 2600
 		}
 
-		this.props.socket.on('stock:get_ticker_data', this.gotData)
+		this.props.socket.on('stock:get_ticker_data', this.receivedData)
 		// this.props.socket.on('stock:get_ticker_positions', this.gotPositions)
 	};
 	
-	gotData(data){
+
+	requestData(display_layer){
+		console.log('requestData')
+		var scope = this;
+		var query = {}
+		query['symbol'] = this.props.symbol;
+		query['indicators'] = display_layer;
+		query['duration'] = this.time_range['1M'];
+
+		// console.log('\tquery:', query)
+
+		this.props.socket.emit('stock:get_ticker_data', query);
+	}
+	receivedData(data){
 		if(this.props.symbol != data.stock){
 			return
 		}
-		console.log('gotData', data)
+		// console.log('receivedData', data)
 
 		if(data.hasOwnProperty('error')){
 			console.warn('No data available for', this.props.symbol)
@@ -111,19 +124,6 @@ class StockGraph extends React.Component {
 			// this.memory.data = jdata
 			// this.setRange()
 		}
-	}
-
-	getData(){
-		console.log('getData')
-		var scope = this;
-		var query = {}
-		query['symbol'] = this.props.symbol;
-		query['indicators'] = this.props.display_info;
-		query['duration'] = this.time_range['1M'];
-
-		console.log('\tquery:', query)
-
-		this.props.socket.emit('stock:get_ticker_data', query);
 	}
 
 	// gotPositions(data){		
@@ -154,18 +154,19 @@ class StockGraph extends React.Component {
 	// }
 
 	componentDidMount(){
-		this.getData()
+		console.log('componentDidMount', this.props.display_layer)
+		this.requestData(this.props.display_layer)
 		// this.getPositions('positions')
 		// this.getPositions('me')
 	}
 
 	componentWillReceiveProps(nextProps){
-		console.log('componentWillReceiveProps', nextProps)
-		this.getData()
+		console.log('componentWillReceiveProps', nextProps.display_layer)
+		this.requestData(nextProps.display_layer)
 	}
 
 	componentWillUnmount(){
-		this.props.socket.removeListener('stock:get_ticker_data', this.gotData);
+		this.props.socket.removeListener('stock:get_ticker_data', this.receivedData);
 		this.props.socket.removeListener('stock:get_ticker_positions', this.gotPositions);
 	}
 
@@ -196,13 +197,13 @@ class StockGraph extends React.Component {
 	}
 
 	handleDialogToggle = () => {
-		console.log('handleDialogToggle')
+		// console.log('handleDialogToggle')
 
 		this.setState({active: !this.state.active});
   	}
 
   	handleDialogAdd = () => {
-		console.log('handleDialogAdd')
+		// console.log('handleDialogAdd')
 
 		var datestring = ("0" + this.state.date.getDate()).slice(-2) + "-" + ("0"+(this.state.date.getMonth()+1)).slice(-2) + "-" +
     	this.state.date.getFullYear()
@@ -232,17 +233,17 @@ class StockGraph extends React.Component {
 	}
 
 	rangeChange = (item) => {
-		console.log('rangeChange', item)
+		// console.log('rangeChange', item)
 	}
 	
 	render(){
-		console.log('render')	
-		console.log('data:', this.state.data)
-		console.log('display:', this.props.display_info)
+		console.log('render', this.props.width)	
+		// console.log('data:', this.state.data)
+		console.log('render', this.props.display_layer)
 		return (
 			<div className={theme['stock_item_g']}>
 				<RangeTabs rangeChange={this.rangeChange} tabs={this.time_range}/>
-				<MultiChart width={this.props.width} data={this.state.data}/>
+				<MultiChart width={this.props.width} visibility={this.props.display_layer} data={this.state.data}/>
 			</div>
 		)
 	}

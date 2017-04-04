@@ -18,6 +18,78 @@ class TickerData(Data):
 	def __init__(self, ticker='TSLA', duration=520, subdir='data', verbose=True):
 		super(TickerData, self).__init__(ticker, subdir, verbose)
 		self.duration = duration
+		
+		# define additional data that should be paired together with processed data during saving
+		self.meta_data = {
+			'close': {
+				'name': 'Closing Price',
+				'abbr': 'closing'
+			},
+			'os_sma_20': {				
+				'name': 'Simple Moving Average 20D',
+				'abbr': 'SMA20'
+			},
+			'os_sma_50': {				
+				'name': 'Simple Moving Average 50D',
+				'abbr': 'SMA50'
+			},
+			'os_sma_200': {				
+				'name': 'Simple Moving Average 200D',
+				'abbr': 'SMA200'
+			},
+			'os_bbu_20': {				
+				'name': 'Bollinger Bands',
+				'abbr': 'BB'
+			},
+			'os_dema_20': {				
+				'name': 'Double Exponential Moving Average 20D',
+				'abbr': 'DEMA20'
+			},
+			'os_ema_20': {				
+				'name': 'Exponential Moving Average 20D',
+				'abbr': 'EMA20'
+			},
+			'os_mp_14': {				
+				'name': 'Midpoint Over Period',
+				'abbr': 'MOP'
+			},
+			'os_sar': {				
+				'name': 'Parabolic SAR',
+				'abbr': 'PSAR'
+			},
+			'os_tema_5': {				
+				'name': 'Triple Exponential Moving Average 5D',
+				'abbr': 'TEMA5'
+			},
+			'os_trima_30': {				
+				'name': 'Triangular Moving Average 30D',
+				'abbr': 'TMA30'
+			},
+			'os_wma_30': {				
+				'name': 'Weighted Moving Average 30D',
+				'abbr': 'WMA30'
+			},
+			'mi_adx_14': {
+				'name': 'Average Directional Movement Index 14D',
+				'abbr': 'ADMI14'
+			},
+			'mi_adxr_14': {
+				'name': 'Average Directional Movement Index Rating 14D',
+				'abbr': 'ADMIR14'
+			},
+			'mi_apo': {
+				'name': 'Absolute Price Oscillator',
+				'abbr': 'APO'
+			},
+			'mi_arron_d': {
+				'name': 'Aroon',
+				'abbr': 'A'
+			},
+			'mi_aroonosc': {
+				'name': 'Aroon Oscillator',
+				'abbr': 'AO'
+			},
+		}
 
 	def _ohlc_adj_(self, dat):
 		# This function adjusts stock data for splits, dividends, etc., returning a data frame with

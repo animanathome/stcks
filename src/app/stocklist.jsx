@@ -8,7 +8,8 @@ class StockList extends React.Component {
 		super(props)
 	}
 	render(){
-		let display_info = this.props.display_info;
+		// console.log('render', this.props.display_layer)
+		console.log('width', this.props.width)		
 		return (
 		<div>
 			<h4>{this.props.name}</h4>
@@ -32,7 +33,7 @@ class StockList extends React.Component {
 							pglp={stock.pglp}
 
 							info={stock}
-							display_info={display_info}
+							display_layer={this.props.display_layer}
 
 							width={this.props.width}
 							socket={this.props.socket}

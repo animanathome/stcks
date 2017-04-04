@@ -150,6 +150,8 @@ var stock = (function(){
 			}
 			payload['data'][e] = {}
 			payload['data'][e]['chart'] = fc['data'][e]['chart']
+			payload['data'][e]['abbr'] = fc['data'][e]['abbr']
+			payload['data'][e]['name'] = fc['data'][e]['name']
 			payload['data'][e]['entries'] = fc['data'][e]['entries'].splice(ds, de)
 		})
 		// console.log('\tpayload:', JSON.stringify(payload))

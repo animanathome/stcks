@@ -19,23 +19,138 @@ class App extends React.Component {
 	constructor(props) {
 		super(props);
 		
-		this.socket = socket;
+		this.socket = socket;		
+		this.data_layers = {
+			'base':{
+				'info':{
+					visibility: 1,
+					name:'Info',
+					abbr:'NF'
+				},
+				'grid_dates':{
+					visibility: 0,
+					name:'Dates Grid',
+					abbr:'DG'
+				},
+				'grid_prices':{
+					visibility: 1,
+					name:'Price Grid',
+					abbr:'PG'
+				},
+				'annotations':{
+					visibility: 0,
+					name: 'Annotations'
+				},
+				'close': {
+					visibility: 1,
+					name: 'Closing Price',
+					abbr: 'CLOSING'
+				}
+			},
+			'overlap':{
+				'os_sma_20': {
+					visibility: 0,
+					name: 'Simple Moving Average 20D',
+					abbr: 'SMA20'
+				},
+				'os_sma_50': {
+					visibility: 0,
+					name: 'Simple Moving Average 50D',
+					abbr: 'SMA50'
+				},
+				'os_sma_200': {
+					visibility: 0,
+					name: 'Simple Moving Average 200D',
+					abbr: 'SMA200'
+				},
+				'os_bbu_20': {
+					visibility: 0,
+					name: 'Bollinger Bands',
+					abbr: 'BB'
+				},
+				'os_dema_20': {
+					visibility: 0,
+					name: 'Double Exponential Moving Average 20D',
+					abbr: 'DEMA20'
+				},
+				'os_ema_20': {
+					visibility: 0,
+					name: 'Exponential Moving Average 20D',
+					abbr: 'EMA20'
+				},
+				'os_mp_14': {
+					visibility: 0,
+					name: 'Midpoint Over Period',
+					abbr: 'MOP'
+				},
+				'os_sar': {
+					visibility: 0,
+					name: 'Parabolic SAR',
+					abbr: 'PSAR'
+				},
+				'os_tema_5': {
+					visibility: 0,
+					name: 'Triple Exponential Moving Average 5D',
+					abbr: 'TEMA5'
+				},
+				'os_trima_30': {
+					visibility: 0,
+					name: 'Triangular Moving Average 30D',
+					abbr: 'TMA30'
+				},
+				'os_wma_30': {
+					visibility: 0,
+					name: 'Weighted Moving Average 30D',
+					abbr: 'WMA30'
+				},
+			},
+			'momentum':{
+				'mi_adx_14': {
+					visibility: 0,
+					name: 'Average Directional Movement Index 14D',
+					abbr: 'ADMI14'
+				},
+				'mi_adxr_14': {
+					visibility: 0,
+					name: 'Average Directional Movement Index Rating 14D',
+					abbr: 'ADMIR14'
+				},
+				'mi_apo': {
+					visibility: 0,
+					name: 'Absolute Price Oscillator',
+					abbr: 'APO'
+				},
+				'mi_arron_d': {
+					visibility: 0,
+					name: 'Aroon',
+					abbr: 'A'
+				},
+				'mi_aroonosc': {
+					visibility: 0,
+					name: 'Aroon Oscillator',
+					abbr: 'AO'
+				},
+			}
+		}
 		this.state = {
 			tickers: {},
 			watch_ticker: [],
-			display_info:['close'],
+			display_layer: this.getInitDisplayedLayers(),
 			active: false,
 			sidebarPinned: false,
 			open: [],
 			width: 600,
 			height: 800
-		}
+		}		
+
 		socket.on('disconnect', () => {
             socket.close();
         });
+        
         socket.on('init', () => {
         	this.init()
         });
+        
         socket.on('stock:get_positions', (data) => {
         	// console.log('get_positions result:', data.stock_list)
 			var stock_data = JSON.parse(data.stock_list)
@@ -61,6 +176,7 @@ class App extends React.Component {
 
         	this.setState({open:sorted_stock})
         })
+
         socket.on('stock:get_tickers', (data) =>{        	
         	var stock_list = JSON.parse(data.stock_list)
         	// console.log('get_tickers result:', stock_list)
@@ -68,12 +184,30 @@ class App extends React.Component {
         })
 	}
 
+	getInitDisplayedLayers(){
+		console.log('getInitDisplayedLayers', this.data_layers)
+		var scope = this;
+		
+		var active = []
+		Object.keys(this.data_layers).map(function(d){
+			// console.log(d, scope.data_layers[d])
+			Object.keys(scope.data_layers[d]).map(function(e){
+				// console.log(d, e)
+				if(scope.data_layers[d][e].visibility){
+					active.push(e)
+				}
+			})
+		})
+		console.log(active)
+		return active
+	}
+
 	componentWillMount(){
         this.updateDimensions();
     }
 
 	updateDimensions(){
-		// console.log('updateDimensions', window.innerWidth, window.innerHeight)
+		console.log('updateDimensions', window.innerWidth, window.innerHeight)
         this.setState({width: window.innerWidth, height: window.innerHeight});
     }
 
@@ -138,14 +272,15 @@ class App extends React.Component {
 
 	onOptionChange = (data) => {
 		console.log('onOptionChange', data)
-		this.setState({display_info:data})
-	}
+		this.setState({display_layer: data})
+	}	
 
 	render() {
+		console.log('render')
 		// console.log('theme', theme)
 		return (
 			<Layout>
-				<Panel>				
+				<Panel>
 					<div id='content' style={{ flex: 1, overflowY: 'auto', padding: '1.8rem' }}>
 					<div id='toolbar' style={{float: 'right'}}>
 						<IconButton icon='more_vert' onClick={this.toggleSidebar}/>
@@ -158,7 +293,7 @@ class App extends React.Component {
 								<StockList key={i} name={sector}
 									width={this.state.width} 
 									height={this.state.height}
-									display_info={this.state.display_info} 
+									display_layer={this.state.display_layer} 
 									stock={this.state.open[sector]} 
 									socket={this.socket}/>
 							)
@@ -189,10 +324,11 @@ class App extends React.Component {
 					</Dialog>
 					</div>
 				</Panel>
-				<Sidebar pinned={ this.state.sidebarPinned } width={ 5 }>                    
-                    <div style={{ flex: 1 }}>
-                        <p>Supplemental content goes here.</p>
-                        <StockOptions onChange={this.onOptionChange}/>
+				<Sidebar pinned={ this.state.sidebarPinned } width={ 33 }>
+                    <div style={{ flex: 1, padding: "20px"}}>
+                    	<IconButton style={{ float: "right"}} icon='close' onClick={ this.toggleSidebar }/>
+                    	<h4>Display</h4>
+                        <StockOptions data={this.data_layers} onChange={this.onOptionChange}/>
                     </div>
                 </Sidebar>
 			</Layout>

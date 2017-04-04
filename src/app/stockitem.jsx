@@ -28,7 +28,7 @@ class StockItem extends React.Component {
 	// }
 
 	render(){
-		// console.log('StockItem:', this.props.info)
+		// console.log('render', this.props.display_layer)
 		// console.log(theme)
 		// console.log(this.props.pgl, typeof(this.props.pgl))
 		var _this = this;
@@ -36,17 +36,13 @@ class StockItem extends React.Component {
 			<div className={theme['stock_item']}>
 				<div onClick={this.handleClick} className={theme['stock_item_h']}>					
 					<div className={theme['stock_item_n']}>
-						<span>{this.props.info.nme} 
-							<font color="gray"><small> {this.props.sbl}</small></font>
-						</span>
+						<span>{this.props.sbl}</span>
 					</div>
 
 					<div onClick={this.handleRemoveClick.bind(this)} 
 						 className={theme['stock_item_m']}>
 						 <FontIcon value='clear' />
 					</div>
-
-					
 
 					<div className={theme['stock_item_d']}>
 						<span>
@@ -76,40 +72,6 @@ class StockItem extends React.Component {
 						</span>
 					</div>
 
-					{/*
-					<div className={theme['stock_item_v']}>
-						
-							{typeof(this.props.app) === 'undefined' && <span><font>-</font></span>}
-							{typeof(this.props.app) !== 'undefined' && 
-								<span>
-									<strong>{this.props.app}</strong> 
-									<font color="gray"><small> USD</small></font>
-								</span>
-							}
-					</div>
-
-
-					
-					<div className={theme['stock_item_d']}>
-						<span>
-							{this.props.dv < 0 && 
-								<font color="red">{this.props.dv+" ("+this.props.dp+")"}
-									<FontIcon 
-										className={theme['stock_item_ud']} 
-										value='arrow_downward'/>
-								</font>
-							}
-							{this.props.dv > 0 && 
-								<font color="green">{this.props.dv+" ("+this.props.dp+")"}
-									<FontIcon 
-										className={theme['stock_item_ud']} 
-										value='arrow_upward'/>
-								</font>
-							}
-						</span>
-					</div>
-					*/}
-
 					<div className={theme['stock_item_v']}>
 						<span>							
 							<strong>{this.props.info.prc}</strong> 
@@ -121,7 +83,7 @@ class StockItem extends React.Component {
 				<div>
 					{this.state.showGraph ? 
 					<StockGraph
-						display_info={this.props.display_info} 
+						display_layer={this.props.display_layer} 
 						width={this.props.width-36} 
 						info={this.props.info}
 						socket={this.props.socket} 

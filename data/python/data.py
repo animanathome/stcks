@@ -14,6 +14,8 @@ class Data(object):
 		self.data = None
 		self.verbose = verbose
 
+		# define additional data that should be paired together with processed data during saving
+		self.meta_data = {}
 		self.set_dir_name(subdir)
 
 	def set_dir_name(self, name):
@@ -51,6 +53,7 @@ class Data(object):
 		data['dates'] = []
 
 		entry = None
+		column_data = None
   		for column in self.data:
   			if column == 'Date':
   				data['dates'] = [self.data[column][i].strftime('%m-%d-%Y') for i in range(len(self.data[column].values))]
@@ -59,10 +62,18 @@ class Data(object):
   				if column == "volume":  					
   					chart = 'bar'
 
-  				data['data'][column] = {
+  				column_data = {
   					'chart': chart,
   					'entries':[float('{:.2f}'.format(item)) for item in self.data[column].values]
   				}
+
+  				if self.meta_data.has_key(column):
+  					column_data.update(self.meta_data[column])
+
+  				data['data'][column] = column_data
+
+  				if self.meta_data.has_key(column):
+  					print column, self.meta_data[column]
 		
 		if self.verbose:
 			print '\t', self.data_file() 
