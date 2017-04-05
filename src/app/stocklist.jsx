@@ -34,6 +34,7 @@ class StockList extends React.Component {
 
 							info={stock}
 							display_layer={this.props.display_layer}
+							range={this.props.range}
 
 							width={this.props.width}
 							socket={this.props.socket}

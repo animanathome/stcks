@@ -22,41 +22,41 @@ import SuccessButton from './components/SuccessButton.js';
 // import StockAutoComplete from './components/StockAutoComplete.js'
 
 
-class RangeTabs extends React.Component {
-	constructor (props){
-		super(props);
-		this.options = Object.keys(this.props.tabs)
-		this.state = {
-			index: 0
-		}
-	}	
+// class RangeTabs extends React.Component {
+// 	constructor (props){
+// 		super(props);
+// 		this.options = Object.keys(this.props.tabs)
+// 		this.state = {
+// 			index: 0
+// 		}
+// 	}	
 
-	handleChange = (index) => {
-		// console.log('handleTabChange', index)
-		// console.log('options:', this.names)
-		// console.log('selected:', this.options[index])
-		this.setState({index});
-		this.rangeChange(this.options[index])
-	}
+// 	handleChange = (index) => {
+// 		// console.log('handleTabChange', index)
+// 		// console.log('options:', this.names)
+// 		// console.log('selected:', this.options[index])
+// 		this.setState({index});
+// 		this.rangeChange(this.options[index])
+// 	}
 
-	rangeChange = (range) => {
-		this.props.rangeChange(range)
-	}
+// 	rangeChange = (range) => {
+// 		this.props.rangeChange(range)
+// 	}
 
-	render () {
-		// console.log('render')		
-		var tabs = this.options.map(function(d, i){
-			// console.log(i, 'tab', d)
-			return <Tab key={i} label={d}></Tab>
-		})
+// 	render () {
+// 		// console.log('render')		
+// 		var tabs = this.options.map(function(d, i){
+// 			// console.log(i, 'tab', d)
+// 			return <Tab key={i} label={d}></Tab>
+// 		})
 
-		return (			
-			<Tabs fixed index={this.state.index} onChange={this.handleChange}>
-				{tabs}
-			</Tabs>
-		)
-	}
-}
+// 		return (			
+// 			<Tabs fixed index={this.state.index} onChange={this.handleChange}>
+// 				{tabs}
+// 			</Tabs>
+// 		)
+// 	}
+// }
 
 class StockGraph extends React.Component {
 	constructor(props) {
@@ -69,7 +69,8 @@ class StockGraph extends React.Component {
 
 		this.state = {
 			data:[],
-
+			range: '1M',
+			
 			// add position
 			active: false,
 			action: null,
@@ -84,8 +85,8 @@ class StockGraph extends React.Component {
 		// }
 		this.time_range = {
 			'1M': 20,
-			'3M': 65,
-			'6M': 130,
+			'3M': 60,
+			'6M': 120,
 			'1Y': 260,
 			'2Y': 540,
 			'3Y': 800,
@@ -98,15 +99,15 @@ class StockGraph extends React.Component {
 	};
 	
 
-	requestData(display_layer){
+	requestData(display_layer, range){
 		console.log('requestData')
 		var scope = this;
 		var query = {}
 		query['symbol'] = this.props.symbol;
 		query['indicators'] = display_layer;
-		query['duration'] = this.time_range['1M'];
+		query['duration'] = this.time_range[range];
 
-		// console.log('\tquery:', query)
+		console.log('\tquery:', query)
 
 		this.props.socket.emit('stock:get_ticker_data', query);
 	}
@@ -114,7 +115,7 @@ class StockGraph extends React.Component {
 		if(this.props.symbol != data.stock){
 			return
 		}
-		// console.log('receivedData', data)
+		console.log('receivedData', data)
 
 		if(data.hasOwnProperty('error')){
 			console.warn('No data available for', this.props.symbol)
@@ -154,15 +155,15 @@ class StockGraph extends React.Component {
 	// }
 
 	componentDidMount(){
-		console.log('componentDidMount', this.props.display_layer)
-		this.requestData(this.props.display_layer)
+		console.log('componentDidMount', this.props.display_layer, this.props.range)
+		this.requestData(this.props.display_layer, this.props.range)
 		// this.getPositions('positions')
 		// this.getPositions('me')
 	}
 
 	componentWillReceiveProps(nextProps){
-		console.log('componentWillReceiveProps', nextProps.display_layer)
-		this.requestData(nextProps.display_layer)
+		console.log('componentWillReceiveProps', nextProps.display_layer, nextProps.range)
+		this.requestData(nextProps.display_layer, nextProps.range)
 	}
 
 	componentWillUnmount(){
@@ -237,13 +238,15 @@ class StockGraph extends React.Component {
 	}
 	
 	render(){
-		console.log('render', this.props.width)	
+		// console.log('render', this.props.width)	
 		// console.log('data:', this.state.data)
-		console.log('render', this.props.display_layer)
+		// console.log('render', this.props.display_layer)
 		return (
-			<div className={theme['stock_item_g']}>
-				<RangeTabs rangeChange={this.rangeChange} tabs={this.time_range}/>
-				<MultiChart width={this.props.width} visibility={this.props.display_layer} data={this.state.data}/>
+			<div className={theme['stock_item_g']}>				
+				<MultiChart 
+					width={this.props.width} 
+					visibility={this.props.display_layer} 
+					data={this.state.data}/>
 			</div>
 		)
 	}

@@ -131,6 +131,8 @@ var stock = (function(){
 	var data = function(symbol, display, duration){
 		console.log('data', symbol, display, duration)
 
+		// only ever return 20 data points
+
 		// get all price data for the given ticker
 		var jsonPath = path.join(__dirname, '../../..', 'data', 'data', symbol+'.json');
 

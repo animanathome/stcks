@@ -83,7 +83,8 @@ class StockItem extends React.Component {
 				<div>
 					{this.state.showGraph ? 
 					<StockGraph
-						display_layer={this.props.display_layer} 
+						display_layer={this.props.display_layer}
+						range={this.props.range}
 						width={this.props.width-36} 
 						info={this.props.info}
 						socket={this.props.socket} 

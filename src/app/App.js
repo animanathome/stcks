@@ -4,6 +4,8 @@ import AppBar from 'react-toolbox/lib/app_bar';
 
 import StockList from './stocklist.jsx'
 import { Layout, NavDrawer, Panel, Sidebar } from 'react-toolbox';
+import { RadioGroup, RadioButton } from 'react-toolbox/lib/radio';
+import {Tab, Tabs} from 'react-toolbox';
 import SuccessButton from './components/SuccessButton.js';
 import StockOptions from './components/StockOptions.js';
 import {IconButton} from 'react-toolbox/lib/button';
@@ -139,8 +141,11 @@ class App extends React.Component {
 			active: false,
 			sidebarPinned: false,
 			open: [],
+
 			width: 600,
-			height: 800
+			height: 800,
+			tab_index: 0,
+			range: '1M'
 		}		
 
 		socket.on('disconnect', () => {
@@ -273,7 +278,17 @@ class App extends React.Component {
 	onOptionChange = (data) => {
 		console.log('onOptionChange', data)
 		this.setState({display_layer: data})
-	}	
+	}
+
+	handleTabChange = (index) => {
+		console.log('handleTabChange', index)
+		this.setState({tab_index:index});
+	}
+
+	handleRangeChange = (value) => {
+		console.log('handleRangeChange', value)
+		this.setState({range:value});
+	}
 
 	render() {
 		console.log('render')
@@ -293,7 +308,8 @@ class App extends React.Component {
 								<StockList key={i} name={sector}
 									width={this.state.width} 
 									height={this.state.height}
-									display_layer={this.state.display_layer} 
+									display_layer={this.state.display_layer}
+									range={this.state.range}
 									stock={this.state.open[sector]} 
 									socket={this.socket}/>
 							)
@@ -327,8 +343,29 @@ class App extends React.Component {
 				<Sidebar pinned={ this.state.sidebarPinned } width={ 33 }>
                     <div style={{ flex: 1, padding: "20px"}}>
                     	<IconButton style={{ float: "right"}} icon='close' onClick={ this.toggleSidebar }/>
-                    	<h4>Display</h4>
-                        <StockOptions data={this.data_layers} onChange={this.onOptionChange}/>
+                    	<h4>Settings</h4>                    	
+                     	<Tabs index={this.state.tab_index} onChange={this.handleTabChange}>
+							<Tab label='Sort'>
+                        		<div></div>
+							</Tab>
+							<Tab label='Range'>
+								<RadioGroup name='comic' value={this.state.range} onChange={this.handleRangeChange}>
+									<RadioButton label='1 Month' value='1M'/>
+									<RadioButton label='3 Month' value='3M'/>
+									<RadioButton label='6 Month' value='6M'/>
+									<RadioButton label='1 Year' value='1Y'/>
+									<RadioButton label='2 Years' value='2Y'/>
+									<RadioButton label='3 Years' value='3Y'/>
+									<RadioButton label='5 Years' value='5Y'/>
+									<RadioButton label='10 Years' value='10Y'/>
+								</RadioGroup>
+							</Tab>
+							<Tab label='Show'>
+                        		<StockOptions 
+                        			data={this.data_layers} 
+                        			onChange={this.onOptionChange}/>
+							</Tab>
+                    	</Tabs>                    	
                     </div>
                 </Sidebar>
 			</Layout>
