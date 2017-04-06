@@ -109,7 +109,7 @@ class StockGraph extends React.Component {
 		query['indicators'] = display_layer;
 		query['duration'] = this.time_range[range];
 
-		console.log('\tquery:', query)
+		// console.log('\tquery:', query)
 
 		this.props.socket.emit('stock:get_ticker_data', query);
 	}
@@ -133,7 +133,7 @@ class StockGraph extends React.Component {
 				data: {}
 			}
 			Object.keys(jdata.data).map(function(d, i){
-				console.log(i, d)
+				// console.log(i, d)
 				if(d == 'volume'){
 					vdata.data[d] = jdata.data[d]
 				}
@@ -184,14 +184,14 @@ class StockGraph extends React.Component {
 	// }
 
 	componentDidMount(){
-		console.log('componentDidMount', this.props.display_layer, this.props.range)
+		// console.log('componentDidMount', this.props.display_layer, this.props.range)
 		this.requestData(this.props.display_layer, this.props.range)
 		// this.getPositions('positions')
 		// this.getPositions('me')
 	}
 
 	componentWillReceiveProps(nextProps){
-		console.log('componentWillReceiveProps', nextProps.display_layer, nextProps.range)
+		// console.log('componentWillReceiveProps', nextProps.display_layer, nextProps.range)
 		this.requestData(nextProps.display_layer, nextProps.range)
 	}
 

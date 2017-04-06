@@ -30,8 +30,8 @@ class Category extends React.Component {
 				scope.active.push(d)
 			}
 		})
-		console.log('\tstate:', this.state)
-		console.log('\tactive:', this.active)
+		// console.log('\tstate:', this.state)
+		// console.log('\tactive:', this.active)
 	}
 
 	processTitle(string){
@@ -242,7 +242,7 @@ class StockOptions extends React.Component {
 	}
 
 	onInit(){
-		console.log('onInit')
+		// console.log('onInit')
 		var scope = this;
 		
 		this.active = {}
@@ -255,11 +255,11 @@ class StockOptions extends React.Component {
 				}
 			})
 		})
-		console.log('\tactive:', this.active)
+		// console.log('\tactive:', this.active)
 	}
 
 	onChange(category, data){
-		console.log('onChange', category, data)
+		// console.log('onChange', category, data)s
 		var scope = this;
 		// this.active = _.union(this.active, data)
 		// console.log('\tactive', this.active)

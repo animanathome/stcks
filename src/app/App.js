@@ -221,7 +221,7 @@ class App extends React.Component {
 	}
 
 	getInitDisplayedLayers(){
-		console.log('getInitDisplayedLayers', this.data_layers)
+		// console.log('getInitDisplayedLayers', this.data_layers)
 		var scope = this;
 		
 		var active = []
@@ -234,7 +234,7 @@ class App extends React.Component {
 				}
 			})
 		})
-		console.log(active)
+		// console.log(active)
 		return active
 	}
 
@@ -243,7 +243,7 @@ class App extends React.Component {
     }
 
 	updateDimensions(){
-		console.log('updateDimensions', window.innerWidth, window.innerHeight)
+		// console.log('updateDimensions', window.innerWidth, window.innerHeight)
         this.setState({width: window.innerWidth, height: window.innerHeight});
     }
 
@@ -302,32 +302,30 @@ class App extends React.Component {
 	]
 
 	toggleSidebar = () => {
-		console.log('toggleSidebar')
+		// console.log('toggleSidebar')
 		this.setState({sidebarPinned: !this.state.sidebarPinned});		
 	}
 
 	onOptionChange = (data) => {
-		console.log('onOptionChange', data)
+		// console.log('onOptionChange', data)
 		this.setState({display_layer: data})
 	}
 
 	handleTabChange = (index) => {
-		console.log('handleTabChange', index)
+		// console.log('handleTabChange', index)
 		this.setState({tab_index:index});
 	}
 
 	handleRangeChange = (value) => {
-		console.log('handleRangeChange', value)
+		// console.log('handleRangeChange', value)
 		this.setState({range:value});
 	}
 
 	handleSortChange = (value) => {
-		console.log('handleSortChange', value)
-
+		// console.log('handleSortChange', value)
 		if(value != this.state.sort){			
 			this.setState({sort:value, open:this.sortStockData(value)});
 		}
-
 	}
 
 	sortStockData = (value) => {
@@ -375,12 +373,12 @@ class App extends React.Component {
 			break;
 		}
 
-		console.log(this.data)
+		// console.log(this.data)
 		return this.data
 	}
 
 	render() {
-		console.log('render')
+		// console.log('render')
 		// console.log('theme', theme)
 		
 		var scope = this
@@ -409,44 +407,9 @@ class App extends React.Component {
 		})
 
 		return (
-			<Layout>
-				<Panel>
-					<div id='content' style={{ flex: 1, overflowY: 'auto', padding: '1.8rem' }}>
-					<div style={{float:'left'}}><h4>Open Positions</h4></div>
-					<div id='toolbar' style={{float: 'right'}}>
-						<div className={theme['date']}>{this.state.updated}</div>
-						<div className={theme['range']}>{this.state.range}</div>
-						<IconButton icon='more_vert' onClick={this.toggleSidebar}/>
-					</div>
-					
-                	{buildItems}
-
-					<div className={theme['tail']}>
-					<SuccessButton 
-							onClick={this.handleDialogToggle} 
-							icon='add' floating accent mini />
-					</div>
-					<Dialog
-							actions={this.dialogActions}
-							active={this.state.active}
-							onEscKeyDown={this.handleDialogToggle}
-							onOverlayClick={this.handleDialogToggle}
-							title={'Add Ticker'}>
-							<Autocomplete
-						        direction="down"
-						        selectedPosition="above"
-						        label="Choose Ticker"
-						        onChange={this.handleAutoCompleteChange.bind(this)}
-						        source={this.state.tickers}
-						        value={this.state.watch_ticker}
-						     />
-						     <div style={{height:"140px"}}>
-						     </div>
-					</Dialog>
-					</div>
-				</Panel>
-				<Sidebar pinned={ this.state.sidebarPinned } scrollY={true} width={ 33 }>
-                    <div style={{ flex: 1, padding: "20px"}}>
+			<Layout>				
+				<NavDrawer pinned={ this.state.sidebarPinned } scrollY={true} width={ 33 }>
+                    <div style={{ flex: 1, padding: "0.5rem"}}>
                     	<IconButton style={{ float: "right"}} icon='close' onClick={ this.toggleSidebar }/>
                     	<h4>Settings</h4>
                      	<Tabs index={this.state.tab_index} onChange={this.handleTabChange}>
@@ -479,7 +442,42 @@ class App extends React.Component {
 							</Tab>
                     	</Tabs>                    	
                     </div>
-                </Sidebar>
+                </NavDrawer>
+                <Panel>
+					<div id='content' style={{ flex: 1, overflowY: 'auto', padding: '0.5rem' }}>
+					<IconButton style={{float:'left'}} icon='menu' onClick={this.toggleSidebar}/>
+					<div style={{float:'left'}}><h4>Open Positions</h4></div>
+					<div id='toolbar' style={{float: 'right'}}>
+						<div className={theme['date']}>{this.state.updated}</div>
+						<div className={theme['range']}>{this.state.range}</div>
+					</div>
+					
+                	{buildItems}
+
+					<div className={theme['tail']}>
+					<SuccessButton 
+							onClick={this.handleDialogToggle} 
+							icon='add' floating accent mini />
+					</div>
+					<Dialog
+							actions={this.dialogActions}
+							active={this.state.active}
+							onEscKeyDown={this.handleDialogToggle}
+							onOverlayClick={this.handleDialogToggle}
+							title={'Add Ticker'}>
+							<Autocomplete
+						        direction="down"
+						        selectedPosition="above"
+						        label="Choose Ticker"
+						        onChange={this.handleAutoCompleteChange.bind(this)}
+						        source={this.state.tickers}
+						        value={this.state.watch_ticker}
+						     />
+						     <div style={{height:"140px"}}>
+						     </div>
+					</Dialog>
+					</div>
+				</Panel>
 			</Layout>
 		);
 	}
