@@ -120,10 +120,14 @@ def today():
 		stocks.append(blurp(item))
 
 	# print stocks
+	data = {
+		'date': end.strftime('%m-%d-%Y'),
+		'stocks':stocks
+	}
 
 	today = os.path.join(os.path.dirname(__file__), '..', 'today.json')
 	with open(today, 'w') as outfile:
-		json.dump(stocks, outfile)
+		json.dump(data, outfile)
 
 if __name__ == '__main__':
 	# print blurp('TSLA')

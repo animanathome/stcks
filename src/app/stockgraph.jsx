@@ -68,9 +68,11 @@ class StockGraph extends React.Component {
 		// this.gotPositions = this.gotPositions.bind(this)
 
 		this.state = {
-			data:[],
+			pdata:{},
+			vdata:{},
 			range: '1M',
-			
+			x: 0,			
+
 			// add position
 			active: false,
 			action: null,
@@ -115,15 +117,42 @@ class StockGraph extends React.Component {
 		if(this.props.symbol != data.stock){
 			return
 		}
-		console.log('receivedData', data)
+		// console.log('receivedData', data)
 
 		if(data.hasOwnProperty('error')){
 			console.warn('No data available for', this.props.symbol)
 		}else{
 			var jdata = JSON.parse(data.stock_data);
-			this.setState({data:jdata})
-			// this.memory.data = jdata
-			// this.setRange()
+			// console.log('data', jdata)
+
+
+			// split the data into price and volume			
+			// volume data
+			var vdata = {
+				dates:jdata.dates,
+				data: {}
+			}
+			Object.keys(jdata.data).map(function(d, i){
+				console.log(i, d)
+				if(d == 'volume'){
+					vdata.data[d] = jdata.data[d]
+				}
+			})
+			// price data
+			var pdata = {
+				dates:jdata.dates,
+				data: {}
+			}
+			Object.keys(jdata.data).map(function(d, i){
+				// console.log(i, d)
+				if(d != 'volume'){
+					pdata.data[d] = jdata.data[d]
+				}
+			})
+
+			// console.log('price data:', pdata)
+			// console.log('volume data:', vdata)
+			this.setState({vdata:vdata, pdata:pdata})
 		}
 	}
 
@@ -171,27 +200,6 @@ class StockGraph extends React.Component {
 		this.props.socket.removeListener('stock:get_ticker_positions', this.gotPositions);
 	}
 
-	// setRange(range){
-	// 	console.log('setRange', range)
-		// if(range == undefined){
-		// 	range = '1Y'
-		// }
-		// var days = this.time_range[range]
-		// console.log('memory:', this.memory)
-		// var slice = this.memory.data.data.slice(Math.max(this.memory.data.data.length - days, 1))
-		// // console.log(slice)
-		// // console.log('structure:', this.memory.data.structure)
-
-		// var data_to_set = {
-		// 	'info': this.memory.data.info,
-		// 	'data': {
-		// 		'data': slice,
-		// 		'structure': this.memory.data.structure
-		// 	}
-		// }
-		// this.setState({data:data_to_set, 'range':range})
-	// }
-
 	setOverlay(visiblity){
 		// console.log('setOverlay', visiblity)
 		this.setState({display:visiblity})
@@ -237,16 +245,59 @@ class StockGraph extends React.Component {
 		// console.log('rangeChange', item)
 	}
 	
+	onMouseMove = (x, source) => {
+		// console.log('onMouseMove', x, source)
+		this.setState({'x':x})
+	}
+
 	render(){
 		// console.log('render', this.props.width)	
 		// console.log('data:', this.state.data)
 		// console.log('render', this.props.display_layer)
+		var scope = this;
+		var priceChart = function(){
+			// console.log('priceChart', scope.state.pdata)
+			if(Object.keys(scope.state.pdata).length > 0){
+				if(Object.keys(scope.state.pdata.data).length > 0){
+					// console.log('creating price chart')
+					return <MultiChart 
+							chart_id={'price'}
+							width={scope.props.width}
+							height={scope.props.width/4}
+							range={scope.props.range}
+							gridPricePrefix={'$'}
+							visibility={scope.props.display_layer}
+							onMouseMove={scope.onMouseMove}
+							mousePosition={scope.state.x}
+							data={scope.state.pdata}/>
+				}
+			}
+		}
+
+		var volumeChart = function(){
+			// console.log('priceChart', scope.state.vdata)
+			if(Object.keys(scope.state.vdata).length > 0){
+				if(Object.keys(scope.state.vdata.data).length > 0){
+					// console.log('creating volume chart')
+					return <MultiChart 
+							chart_id={'volume'}
+							width={scope.props.width}
+							height={scope.props.width/6} 
+							range={scope.props.range}
+							visibility={scope.props.display_layer}
+							gridPricePrefix={''}
+							onMouseMove={scope.onMouseMove}
+							mousePosition={scope.state.x}
+							y_min={0}
+							data={scope.state.vdata}/>
+				}
+			}	
+		}
+
 		return (
-			<div className={theme['stock_item_g']}>				
-				<MultiChart 
-					width={this.props.width} 
-					visibility={this.props.display_layer} 
-					data={this.state.data}/>
+			<div className={theme['stock_item_g']}>
+				{priceChart()}
+				{volumeChart()}
 			</div>
 		)
 	}

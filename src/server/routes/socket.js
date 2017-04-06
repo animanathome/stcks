@@ -139,11 +139,19 @@ var stock = (function(){
 		// only return the requested content (display) for the given duration
 		var fc = JSON.parse(get_json_file(jsonPath))
 
+		//	get data range (using splice)		
 		var de = fc['dates'].length;
 		var ds = de - duration;
 
+		// get # of sample points using filter
+		var increment = duration / 20;
+		// console.log('increment:', increment)
+		// console.log('dates', fc['dates'].splice(ds, de).filter(function(d, i){
+		// 	if(i%increment == 0) return d
+		// }))
+		
 		var payload = {
-			dates:fc['dates'].splice(ds, de),
+			dates:fc['dates'].splice(ds, de).filter(function(d, i){if(i%increment == 0) return d}),
 			data:{}
 		}				
 		Object.keys(fc['data']).map(function(e, j){
@@ -154,9 +162,9 @@ var stock = (function(){
 			payload['data'][e]['chart'] = fc['data'][e]['chart']
 			payload['data'][e]['abbr'] = fc['data'][e]['abbr']
 			payload['data'][e]['name'] = fc['data'][e]['name']
-			payload['data'][e]['entries'] = fc['data'][e]['entries'].splice(ds, de)
+			payload['data'][e]['entries'] = fc['data'][e]['entries'].splice(ds, de).filter(function(d, i){if(i%increment == 0) return d})
 		})
-		// console.log('\tpayload:', JSON.stringify(payload))
+		console.log('\tpayload:', JSON.stringify(payload))
 		return JSON.stringify(payload)
 	}
 

@@ -2,6 +2,7 @@ import React from 'react'
 import StockGraph from './stockgraph.jsx'
 import theme from './stockitem.css';
 import FontIcon from 'react-toolbox/lib/font_icon';
+import ReactDOM from 'react-dom';
 
 class StockItem extends React.Component {
 	constructor(props){
@@ -23,14 +24,10 @@ class StockItem extends React.Component {
 		this.props.socket.emit('stock:remove_ticker', {ticker:[this.props.sbl]})
 	}
 
-	// componentWillUpdate(nextProps, nextState){
-	// 	console.log('componentWillUpdate', nextProps, nextState)
-	// }
-
 	render(){
 		// console.log('render', this.props.display_layer)
 		// console.log(theme)
-		// console.log(this.props.pgl, typeof(this.props.pgl))
+		// console.log(this.props.pgl, typeof(this.props.pgl))				
 		var _this = this;
 		return (
 			<div className={theme['stock_item']}>

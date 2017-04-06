@@ -36,10 +36,11 @@
 
 .stock_item_v {	
 	float: right;
-	width: 100px;
-	font-size: 14px;
+	width: 80px;
+	font-size: 1.2rem;
 	display: table-cell;
 	padding-right: 5px;
+	line-height: 2rem;
 }
 
 .stock_item_v span{

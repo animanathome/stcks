@@ -1,4 +1,7 @@
 import React from 'react';
+// import Context from 'react-context';
+
+import Moment from 'moment';
 import AppBar from 'react-toolbox/lib/app_bar';
 // import PurpleAppBar from './components/PurpleAppBar.js';
 
@@ -12,6 +15,7 @@ import {IconButton} from 'react-toolbox/lib/button';
 import Dialog from 'react-toolbox/lib/dialog';
 import Autocomplete from 'react-toolbox/lib/autocomplete';
 import theme from './app.css';
+import StockItem from './stockitem.jsx'
 
 import _ from 'underscore'
 import io from 'socket.io-client';
@@ -21,12 +25,14 @@ class App extends React.Component {
 	constructor(props) {
 		super(props);
 		
-		this.socket = socket;		
+		var scope = this;
+		this.socket = socket;
+		this.data = {}
 		this.data_layers = {
 			'base':{
 				'info':{
 					visibility: 1,
-					name:'Info',
+					name:'Legend',
 					abbr:'NF'
 				},
 				'grid_dates':{
@@ -132,6 +138,13 @@ class App extends React.Component {
 					name: 'Aroon Oscillator',
 					abbr: 'AO'
 				},
+			},
+			'volume':{
+				'volume':{
+					visibility: 0,
+					name: 'Volume',
+					abbr: 'vol'
+				}
 			}
 		}
 		this.state = {
@@ -145,7 +158,9 @@ class App extends React.Component {
 			width: 600,
 			height: 800,
 			tab_index: 0,
-			range: '1M'
+			range: '6M',
+			sort: 'pchange',
+			updated: null
 		}		
 
 		socket.on('disconnect', () => {
@@ -160,26 +175,42 @@ class App extends React.Component {
         	// console.log('get_positions result:', data.stock_list)
 			var stock_data = JSON.parse(data.stock_list)
 			
+			// when was the data generated/updated?
+			var date = 'updated '+Moment(stock_data.date, "MM-DD-YYYY").calendar(null, {
+			    sameDay: '[today]',
+			    nextDay: '[tomorrow]',
+			    nextWeek: 'dddd',
+			    lastDay: '[yesterday]',
+			    lastWeek: '[last] dddd',
+			    sameElse: 'DD/MM/YYYY'
+			})
+			console.log('update', date)
+			console.log('update', stock_data.date)
+
+			// store unprocessed stocks on object
+			scope.data = stock_data.stocks
+
 			// get sectors
-			var sectors = []
-			stock_data.map(function(stock_item, idx){
-				if(stock_item.hasOwnProperty('str')){
-					sectors.push(stock_item['str'])
-				}
-			})
+			// var sectors = []
+			// stock_data.stocks.map(function(stock_item, idx){
+			// 	if(stock_item.hasOwnProperty('str')){
+			// 		sectors.push(stock_item['str'])
+			// 	}
+			// })
 
-			// sort by sector
-			var sorted_stock = {}
-			_.uniq(sectors).map(function(item){
-				sorted_stock[item] = []
-			})
+			// // sort by sector
+			// var sorted_stock = {}
+			// _.uniq(sectors).map(function(item){
+			// 	sorted_stock[item] = []
+			// })
 			
-			stock_data.map(function(stock_item, idx){
-				sorted_stock[stock_item['str']].push(stock_item)
-			})
-			// console.log(sorted_stock)
+			// stock_data.stocks.map(function(stock_item, idx){
+			// 	sorted_stock[stock_item['str']].push(stock_item)
+			// })
+			// console.log('sorted stock:', sorted_stock)
 
-        	this.setState({open:sorted_stock})
+			
+        	this.setState({open:this.sortStockData(this.state.sort), updated:date})
         })
 
         socket.on('stock:get_tickers', (data) =>{        	
@@ -290,31 +321,105 @@ class App extends React.Component {
 		this.setState({range:value});
 	}
 
+	handleSortChange = (value) => {
+		console.log('handleSortChange', value)
+
+		if(value != this.state.sort){			
+			this.setState({sort:value, open:this.sortStockData(value)});
+		}
+
+	}
+
+	sortStockData = (value) => {
+		console.log('sortStockData', value)
+
+		switch(value){
+			case "name":
+				this.data.sort(function(a, b){
+					var nameA = a.nme.toUpperCase(); // ignore upper and lowercase
+					var nameB = b.nme.toUpperCase(); // ignore upper and lowercase
+					if (nameA < nameB) {
+						return -1;
+					}
+					if (nameA > nameB) {
+						return 1;
+					}
+
+					// names must be equal
+					return 0;
+				})
+			break;
+
+			case "vchange":
+				this.data.sort(function(a, b){
+					return b.pgl - a.pgl 
+				})
+			break;
+
+			case "pchange":
+				this.data.sort(function(a, b){
+					return parseFloat(b.pglp) - parseFloat(a.pglp)
+				})
+			break;
+
+			case "sposition":
+				this.data.sort(function(a, b){
+					return b.pq - a.pq
+				})
+			break;
+
+			case "vposition":
+				this.data.sort(function(a, b){
+					return b.prc * b.pq - a.prc * a.pq
+				})
+			break;
+		}
+
+		console.log(this.data)
+		return this.data
+	}
+
 	render() {
 		console.log('render')
 		// console.log('theme', theme)
+		
+		var scope = this
+		var buildItems = this.state.open.map(function(d, i){
+			// console.log('socket', socket)
+			return <StockItem 
+						key={i}
+						nme={d.nme}
+						sbl={d.sbl}
+						
+						prc={d.prc}
+						dv={d.dv}
+						dp={d.dp}
+
+						app={d.app}
+						pq={d.pq}
+						pgl={d.pgl}
+						pglp={d.pglp}
+
+						info={d}
+						display_layer={scope.state.display_layer}
+						range={scope.state.range}
+
+						width={scope.state.width}
+						socket={socket}/>
+		})
+
 		return (
 			<Layout>
 				<Panel>
 					<div id='content' style={{ flex: 1, overflowY: 'auto', padding: '1.8rem' }}>
+					<div style={{float:'left'}}><h4>Open Positions</h4></div>
 					<div id='toolbar' style={{float: 'right'}}>
+						<div className={theme['date']}>{this.state.updated}</div>
+						<div className={theme['range']}>{this.state.range}</div>
 						<IconButton icon='more_vert' onClick={this.toggleSidebar}/>
 					</div>
 					
-                
-					{
-						_.keys(this.state.open).map((sector, i) =>{
-							return (
-								<StockList key={i} name={sector}
-									width={this.state.width} 
-									height={this.state.height}
-									display_layer={this.state.display_layer}
-									range={this.state.range}
-									stock={this.state.open[sector]} 
-									socket={this.socket}/>
-							)
-						})
-					}	
+                	{buildItems}
 
 					<div className={theme['tail']}>
 					<SuccessButton 
@@ -340,16 +445,23 @@ class App extends React.Component {
 					</Dialog>
 					</div>
 				</Panel>
-				<Sidebar pinned={ this.state.sidebarPinned } width={ 33 }>
+				<Sidebar pinned={ this.state.sidebarPinned } scrollY={true} width={ 33 }>
                     <div style={{ flex: 1, padding: "20px"}}>
                     	<IconButton style={{ float: "right"}} icon='close' onClick={ this.toggleSidebar }/>
-                    	<h4>Settings</h4>                    	
+                    	<h4>Settings</h4>
                      	<Tabs index={this.state.tab_index} onChange={this.handleTabChange}>
 							<Tab label='Sort'>
-                        		<div></div>
+                        		<RadioGroup value={this.state.sort} onChange={this.handleSortChange}>
+                        			<RadioButton label='Position Change' value='vchange'/>
+                        			<RadioButton label='Percentage Change' value='pchange'/>
+                        			<RadioButton label='Position Size' value='sposition'/>
+                        			<RadioButton label='Position Value' value='vposition'/>
+                        			<RadioButton label='Name' value='name'/>
+                        			<RadioButton label='Sector' value='sector'/>
+                        		</RadioGroup>
 							</Tab>
 							<Tab label='Range'>
-								<RadioGroup name='comic' value={this.state.range} onChange={this.handleRangeChange}>
+								<RadioGroup value={this.state.range} onChange={this.handleRangeChange}>
 									<RadioButton label='1 Month' value='1M'/>
 									<RadioButton label='3 Month' value='3M'/>
 									<RadioButton label='6 Month' value='6M'/>

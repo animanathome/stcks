@@ -3,3 +3,25 @@
 	padding: 10px;
 }
 
+.range {
+    float: left;
+    color: gray;
+    font-size: 1.2rem;
+    font-weight: 400;
+	height: 3.6rem;
+	line-height: 4.2rem;
+	text-align: center;
+	align-content: center;	
+}
+
+.date {
+    float: left;
+    color: gray;
+    font-size: 1rem;
+    font-weight: 300;
+	height: 3.6rem;
+	line-height: 4.4rem;
+	text-align: center;
+	align-content: center;
+	margin-right: 10px;	
+}

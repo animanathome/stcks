@@ -89,6 +89,10 @@ class TickerData(Data):
 				'name': 'Aroon Oscillator',
 				'abbr': 'AO'
 			},
+			'volume':{
+				'name': 'Volume',
+				'abbr': 'volume'
+			}
 		}
 
 	def _ohlc_adj_(self, dat):
