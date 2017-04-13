@@ -145,6 +145,13 @@ class App extends React.Component {
 					name: 'Volume',
 					abbr: 'vol'
 				}
+			},
+			'positions':{
+				'position_me':{
+					visibility: 0,
+					name: 'Me',
+					abbr: 'ME'
+				}
 			}
 		}
 		this.state = {
@@ -256,24 +263,9 @@ class App extends React.Component {
     }
 
 	init(){
-		// console.log('init')
-
-		// get all open positions
-		// user for display
+		console.log('init')
 		socket.emit('stock:get_positions', {position: 'open', date: new Date()})
-		// socket.once('stock:get_positions', (data) => {
-  //       	console.log('got stock:data back:', data.stock_list)
-  //       	this.setState({day:data.stock_list})
-  //       })
-
-        // get all tickers (symbol + name)
-        // used for adding new positions
         socket.emit('stock:get_tickers')
-        // socket.once('stock:get_tickers', (data) =>{        	
-        // 	var stock_list = JSON.parse(data.stock_list)
-        // 	console.log('result:', stock_list)
-        // 	this.setState({tickers:stock_list})
-        // })
 	}
 
 	handleDialogToggle = () => {

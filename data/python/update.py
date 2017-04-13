@@ -9,25 +9,6 @@ from ticker_info import get_ticker_info, get_ticker_value_info
 from ticker_positions import ticker_position, active_positions
 from ticker_data import TickerData, get_some_ticker_data
 
-# def balance():
-# 	# get the total value of all positions
-# 	spv = {}
-# 	tv = 0
-# 	ap = active_positions()
-# 	for item in ap:
-# 		t = TickerData(item).init()
-# 		cp = float(t.get_value('close', -1)); # current price	
-# 		pd = ticker_position(item, cp); # position data	
-# 		pv = pd['quantity'] * cp; # position value
-# 		spv[item] = {'pv':pv}		
-# 		tv += pv; # total value
-
-# 	for item in ap:
-# 		pp = '{:.2f}%'.format((spv[item]['pv']/tv)*100)
-# 		spv[item].update({'pp':pp})
-
-# 	return spv
-
 def details():
 	get_some_ticker_data(active_positions())
 

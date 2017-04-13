@@ -18,45 +18,6 @@ import DatePicker from 'react-toolbox/lib/date_picker';
 import Dropdown from 'react-toolbox/lib/dropdown';
 
 import SuccessButton from './components/SuccessButton.js';
-// import AddPosition from './components/AddPosition.js';
-// import StockAutoComplete from './components/StockAutoComplete.js'
-
-
-// class RangeTabs extends React.Component {
-// 	constructor (props){
-// 		super(props);
-// 		this.options = Object.keys(this.props.tabs)
-// 		this.state = {
-// 			index: 0
-// 		}
-// 	}	
-
-// 	handleChange = (index) => {
-// 		// console.log('handleTabChange', index)
-// 		// console.log('options:', this.names)
-// 		// console.log('selected:', this.options[index])
-// 		this.setState({index});
-// 		this.rangeChange(this.options[index])
-// 	}
-
-// 	rangeChange = (range) => {
-// 		this.props.rangeChange(range)
-// 	}
-
-// 	render () {
-// 		// console.log('render')		
-// 		var tabs = this.options.map(function(d, i){
-// 			// console.log(i, 'tab', d)
-// 			return <Tab key={i} label={d}></Tab>
-// 		})
-
-// 		return (			
-// 			<Tabs fixed index={this.state.index} onChange={this.handleChange}>
-// 				{tabs}
-// 			</Tabs>
-// 		)
-// 	}
-// }
 
 class StockGraph extends React.Component {
 	constructor(props) {
@@ -68,8 +29,13 @@ class StockGraph extends React.Component {
 		// this.gotPositions = this.gotPositions.bind(this)
 
 		this.state = {
-			pdata:{},
+			// price data
+			pdata:{}, 
+
+			// volume data
 			vdata:{},
+			
+			// time range - time period the data covers
 			range: '1M',
 			x: 0,			
 
@@ -106,6 +72,8 @@ class StockGraph extends React.Component {
 		var scope = this;
 		var query = {}
 		query['symbol'] = this.props.symbol;
+
+		// Since display layer is a flat list we need to ensure each data point has a unique name throughout. This also means that we'll need to be able to deduce its function based on the name. Ideally we should pass an object here which properly discribes each data point individually. This will ensure scalability and make the data less enigmatic.
 		query['indicators'] = display_layer;
 		query['duration'] = this.time_range[range];
 
@@ -125,7 +93,6 @@ class StockGraph extends React.Component {
 			var jdata = JSON.parse(data.stock_data);
 			// console.log('data', jdata)
 
-
 			// split the data into price and volume			
 			// volume data
 			var vdata = {
@@ -141,7 +108,8 @@ class StockGraph extends React.Component {
 			// price data
 			var pdata = {
 				dates:jdata.dates,
-				data: {}
+				data: {},
+				positions: {}
 			}
 			Object.keys(jdata.data).map(function(d, i){
 				// console.log(i, d)
@@ -150,44 +118,21 @@ class StockGraph extends React.Component {
 				}
 			})
 
+			if(jdata.hasOwnProperty('positions')){				
+				Object.keys(jdata.positions).map(function(d, i){
+					pdata.positions[d] = jdata.positions[d]
+				})
+			}
+
 			// console.log('price data:', pdata)
 			// console.log('volume data:', vdata)
 			this.setState({vdata:vdata, pdata:pdata})
 		}
 	}
 
-	// gotPositions(data){		
-	// 	if(this.props.symbol != data.stock){
-	// 		return
-	// 	}
-	// 	// console.log('got', data.user, 'stock:get_ticker_positions back', data)
-	// 	if(data.hasOwnProperty('error')){
-	// 		console.warn('No data available for', this.props.symbol)
-	// 	}else{
-	// 		var object = {}
-	// 		object[data.user] = data.stock_data
-	// 		this.setState(object)
-	// 	}
-	// }
-
-	// getPositions(user){
-	// 	if(user == undefined){
-	// 		user = 'positions'
-	// 	}
-	// 	// console.log('getPositions', user)
-
-	// 	var scope = this;
-	// 	var query = {}
-	// 	query['symbol'] = this.props.symbol;
-	// 	query['user'] = user;
-	// 	this.props.socket.emit('stock:get_ticker_positions', query)
-	// }
-
 	componentDidMount(){
 		// console.log('componentDidMount', this.props.display_layer, this.props.range)
 		this.requestData(this.props.display_layer, this.props.range)
-		// this.getPositions('positions')
-		// this.getPositions('me')
 	}
 
 	componentWillReceiveProps(nextProps){

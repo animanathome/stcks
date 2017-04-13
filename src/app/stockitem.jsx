@@ -25,7 +25,7 @@ class StockItem extends React.Component {
 	}
 
 	render(){
-		// console.log('render', this.props.display_layer)
+		console.log('render', this.props.display_layer)
 		// console.log(theme)
 		// console.log(this.props.pgl, typeof(this.props.pgl))				
 		var _this = this;
