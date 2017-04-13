@@ -2,6 +2,7 @@ import React from 'react'
 import * as d3 from "d3"
 import _ from 'underscore'
 import merge from 'deepmerge'
+import ReactDOM from 'react-dom';
 
 import Positions from '../utils/Positions.jsx'
 
@@ -65,6 +66,10 @@ class MultiChart extends React.Component {
     	if(this.x === undefined || this.dates_range === undefined){
     		return
     	}
+
+    	var node = ReactDOM.findDOMNode(this);
+    	// console.log(this.state.chart_id)
+    	// console.log(node.clientWidth)
 
         var eachBand = this.x.step();
         var bandWidth = this.x.bandwidth()/2
@@ -176,7 +181,7 @@ class MultiChart extends React.Component {
     	}
 
     	if(updated_dimensions){
-    		console.log('updating x')
+    		// console.log('updating x')
     		if(this.x !== undefined){
     			this.x.rangeRound([0, width])
     		}
@@ -357,7 +362,7 @@ class MultiChart extends React.Component {
 	}
 
 	render(){
-		console.log('render', this.state)
+		// console.log('render', this.state)
 		// console.log('cstate:', Object.keys(this.state.data).length)		
 		var scope = this;
 
@@ -417,7 +422,7 @@ class MultiChart extends React.Component {
 
         var positions = Object.keys(this.state.positions)
         var buidPositions = positions.map(function(d, i){
-        	console.log('position', i, d)
+        	// console.log('position', i, d)
         	if(scope.state.visibility['position_'+d]){
         		return <PositionChart name={d} key={i} x={scope.x} height={height} data={scope.state.positions[d]}/>
         	}

@@ -206,7 +206,18 @@ var stock = (function(){
 		var ds = de - duration;
 
 		// get # of sample points using filter
-		var increment = duration / 20;
+		
+		var div = 20
+		switch(duration){
+			case 20: div = 20; break;
+			case 60: div = 60; break;
+			case 120: div = 60; break;
+			case 260: div = 65; break;
+			case 540: div = 60; break;
+			case 800: div = 80; break;
+		}
+
+		var increment = duration / div;
 		// console.log('increment:', increment)
 		// console.log('dates', fc['dates'].splice(ds, de).filter(function(d, i){
 		// 	if(i%increment == 0) return d

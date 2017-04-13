@@ -31,7 +31,7 @@ class App extends React.Component {
 		this.data_layers = {
 			'base':{
 				'info':{
-					visibility: 1,
+					visibility: 0,
 					name:'Legend',
 					abbr:'NF'
 				},
@@ -57,12 +57,12 @@ class App extends React.Component {
 			},
 			'overlap':{
 				'os_sma_20': {
-					visibility: 0,
+					visibility: 1,
 					name: 'Simple Moving Average 20D',
 					abbr: 'SMA20'
 				},
 				'os_sma_50': {
-					visibility: 0,
+					visibility: 1,
 					name: 'Simple Moving Average 50D',
 					abbr: 'SMA50'
 				},

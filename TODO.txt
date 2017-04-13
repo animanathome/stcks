@@ -1,0 +1,13 @@
+= FRONT END =
+
+== MOBILE == 
+
+- Fix menu screen so it occupies an entire screen instead of squash the exiting elements
+- Add fixed title bar showing column names (ticker, company name, price, position, ...)
+- Create a minimized version of the menu screen
+- Remove white space around graphs (to optimize screen real estate)
+- Add transparancy to secondary lines (overlap)
+- Determine use of the additional data points - should the be used an overlay or do they require their own dedicated graph.
+- Have a mobile specific css file - stroke-width 1px (instead of 2px on desktop)
+
+= BACK END =
